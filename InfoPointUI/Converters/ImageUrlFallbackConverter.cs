@@ -9,61 +9,37 @@ namespace InfoPointUI.Converters
 {
     public class ImageUrlFallbackConverter : IValueConverter
     {
-        public string FallBackImageName = @"pack://application:,,,/InfoPointUI;component/Assets/Images/empty_image.png";
-
-        public bool ImageExistsInResources(string imageName)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            string resursaCautata = "InfoPointUI.Assets.Images." + imageName.ToLower(); 
-            return assembly.GetManifestResourceNames().Contains(resursaCautata);
-        }
+        private static readonly string FallbackImageUri = @"pack://application:,,,/InfoPointUI;component/Assets/Images/empty_image.png";
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
-            string? url = value as string;
+            string? imageName = value as string;
 
-            if (string.IsNullOrWhiteSpace(url))
-            {
-                // Fallback image embedded in project
-                return new BitmapImage(new Uri(FallBackImageName));
-            }
-
-            if (!Uri.IsWellFormedUriString(url, UriKind.Absolute) && !File.Exists(url))
-            {
-                if (!string.IsNullOrEmpty(url))
-                {
-                    if (ImageExistsInResources(url))
-                    {
-                        url = @$"pack://application:,,,/InfoPointUI;component/Assets/Images/{url.ToLower()}";
-                        try
-                        {
-                            // try to return the image from Embedded Resources. Warning, not Resource but Embedded resource
-                            return new BitmapImage(new Uri(url));
-                        }
-                        catch
-                        {
-                            // Fallback image embedded in project, if the resource image is not found
-                            return new BitmapImage(new Uri(FallBackImageName));
-                        }
-                    }
-                }
-                // Fallback image embedded in project
-                return new BitmapImage(new Uri(FallBackImageName));
-            }
+            if (string.IsNullOrWhiteSpace(imageName))
+                return new BitmapImage(new Uri(FallbackImageUri));
 
             try
             {
-                return new BitmapImage(new Uri(url, UriKind.RelativeOrAbsolute));
+                Uri imageUri;
+
+                if (Uri.IsWellFormedUriString(imageName, UriKind.Absolute))
+                {
+                    imageUri = new Uri(imageName, UriKind.Absolute);
+                }
+                else
+                {
+                    imageUri = new Uri($"pack://application:,,,/InfoPointUI;component/Assets/Images/{imageName.ToLower()}", UriKind.Absolute);
+                }
+
+                return new BitmapImage(imageUri);
             }
             catch
             {
-                // In case the URL is malformed
-                return new BitmapImage(new Uri(FallBackImageName));
+                return new BitmapImage(new Uri(FallbackImageUri));
             }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture) => Binding.DoNothing;
-
     }
 
 }
