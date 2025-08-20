@@ -32,8 +32,8 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    private string _selectedCategory = "Toate";
-    public string SelectedCategory
+    private string? _selectedCategory = "Toate";
+    public string? SelectedCategory
     {
         get => _selectedCategory;
         set
