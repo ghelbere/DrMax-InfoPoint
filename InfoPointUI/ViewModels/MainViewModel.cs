@@ -101,6 +101,7 @@ public class MainViewModel : INotifyPropertyChanged
     {
         TotalPages = 1;         // sau 0, dar ideal e să fie > 0
 
+        // Debounce timer for searching
         debounceTimer = new(150);
         debounceTimer.Elapsed += async (_, _) => await SearchAsync();
         debounceTimer.AutoReset = false;

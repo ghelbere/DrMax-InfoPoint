@@ -9,7 +9,7 @@ namespace InfoPointUI.Controls;
 
 public partial class ProductTile : UserControl
 {
-    public string FallBackImageName = @"pack://application:,,,/InfoPointUI;component/Assets/Images/empty_image.png\";
+    public string FallBackImageName = @"pack://application:,,,/InfoPointUI;component/Assets/Images/empty_image.png";
     public ProductTile()
     {
         InitializeComponent();

@@ -30,7 +30,7 @@ namespace InfoPointUI.Converters
                 {
                     imageUri = new Uri($"pack://application:,,,/InfoPointUI;component/Assets/Images/{imageName.ToLower()}", UriKind.Absolute);
                 }
-
+                
                 return new BitmapImage(imageUri);
             }
             catch
