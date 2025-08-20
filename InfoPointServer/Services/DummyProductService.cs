@@ -1,5 +1,4 @@
 ﻿using InfoPointServer.Models;
-using InfoPointServer.Models;
 
 namespace InfoPointServer.Services;
 

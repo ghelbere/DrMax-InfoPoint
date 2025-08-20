@@ -29,9 +29,9 @@
     <EmbeddedResource Include="Assets\Images\gps_pin.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
-    <Resource Include="Assets\Images\nurofen400.png">
+    <EmbeddedResource Include="Assets\Images\nurofen400.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </Resource>
+    </EmbeddedResource>
   </ItemGroup>
 
 </Project>

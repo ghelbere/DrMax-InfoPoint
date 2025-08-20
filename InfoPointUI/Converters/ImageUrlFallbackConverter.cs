@@ -13,7 +13,6 @@ namespace InfoPointUI.Converters
 
         public bool ImageExistsInResources(string imageName)
         {
-            return true;
             var assembly = Assembly.GetExecutingAssembly();
             string resursaCautata = "InfoPointUI.Assets.Images." + imageName.ToLower(); 
             return assembly.GetManifestResourceNames().Contains(resursaCautata);
