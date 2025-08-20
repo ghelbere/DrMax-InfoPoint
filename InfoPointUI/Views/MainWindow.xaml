@@ -1,0 +1,162 @@
+﻿<Window x:Class="InfoPointUI.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:viewModels="clr-namespace:InfoPointUI.ViewModels"
+        xmlns:controls="clr-namespace:InfoPointUI.Controls"
+        xmlns:converters="clr-namespace:InfoPointUI.Converters"
+        Title="Pharmacy Tablet UI"
+        WindowState="Maximized"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        Background="White">
+
+    <Window.Resources>
+        <converters:CategoryStyleSelector x:Key="CategoryStyleSelector" />
+    </Window.Resources>
+
+    <Window.DataContext>
+        <viewModels:MainViewModel />
+    </Window.DataContext>
+
+    <Grid x:Name="MainGrid" Margin="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <!-- Header -->
+            <RowDefinition Height="*" />
+            <!-- Produse + navigare -->
+            <RowDefinition Height="Auto" />
+            <!-- Bara paginare -->
+        </Grid.RowDefinitions>
+
+        <!-- 🔝 Header -->
+        <Grid Grid.Row="0" Margin="0,0,0,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+            </Grid.ColumnDefinitions>
+
+            <!-- 🖼️ Logo -->
+            <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Dr.Max_logo.svg/330px-Dr.Max_logo.svg.png"
+                   Height="48"
+                   VerticalAlignment="Center"
+                   Margin="0,0,20,0" />
+
+            <!-- 🔍 Search și categorii -->
+            <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <TextBox Style="{StaticResource SearchBoxStyle}"
+                         Width="360"
+                         Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" />
+
+                <Button Content="Toate"
+                        Margin="20,0,10,0"
+                        Command="{Binding SelectCategoryCommand}"
+                        CommandParameter=""
+                        Style="{Binding SelectedCategory, Converter={StaticResource CategoryStyleSelector}}" />
+
+                <Button Content="Cosmetice"
+                        Command="{Binding SelectCategoryCommand}"
+                        CommandParameter="Cosmetice"
+                        Style="{Binding SelectedCategory, Converter={StaticResource CategoryStyleSelector}, ConverterParameter=Cosmetice}" />
+
+                <Button Content="Durere"
+                        Command="{Binding SelectCategoryCommand}"
+                        CommandParameter="Durere"
+                        Style="{Binding SelectedCategory, Converter={StaticResource CategoryStyleSelector}, ConverterParameter=Durere}" />
+
+                <Button Content="Proteze"
+                        Command="{Binding SelectCategoryCommand}"
+                        CommandParameter="Proteze"
+                        Style="{Binding SelectedCategory, Converter={StaticResource CategoryStyleSelector}, ConverterParameter=Proteze}" />
+            </StackPanel>
+        </Grid>
+
+        <!-- 🧃 Produse + navigare -->
+        <Grid Grid.Row="1">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="80" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="80" />
+            </Grid.ColumnDefinitions>
+
+            <!-- ◀️ Zona stânga -->
+            <Border Grid.Column="0" Background="#20FFFFFF" Cursor="Hand">
+                <Border.InputBindings>
+                    <MouseBinding Gesture="LeftClick" Command="{Binding PreviousPageCommand}" />
+                </Border.InputBindings>
+                <TextBlock Text="◀️" FontSize="32" Foreground="{StaticResource PharmacyGreen}"
+                           VerticalAlignment="Center" HorizontalAlignment="Center" />
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding DisplayPage}" Value="1">
+                                <Setter Property="Visibility" Value="Hidden" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+
+            <!-- 🧃 Tile-uri fluid responsive -->
+            <ListBox Grid.Column="1"
+                     ItemsSource="{Binding Products}"
+                     Background="Transparent"
+                     BorderThickness="0"
+                     ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                     ScrollViewer.VerticalScrollBarVisibility="Disabled"
+                     SelectionMode="Single">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel IsItemsHost="True" />
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <controls:ProductTile Product="{Binding}" />
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+
+            <!-- ▶️ Zona dreapta -->
+            <Border Grid.Column="2" Background="#20FFFFFF" Cursor="Hand">
+                <Border.InputBindings>
+                    <MouseBinding Gesture="LeftClick" Command="{Binding NextPageCommand}" />
+                </Border.InputBindings>
+                <TextBlock Text="▶️" FontSize="32" Foreground="{StaticResource PharmacyGreen}"
+                           VerticalAlignment="Center" HorizontalAlignment="Center" />
+                <Border.Style>
+                    <Style TargetType="Border">
+                        <Setter Property="Visibility" Value="Visible" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding IsLastPage}" Value="True">
+                                <Setter Property="Visibility" Value="Hidden" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+            </Border>
+        </Grid>
+
+        <!-- 💚 Bara paginării -->
+        <Border Grid.Row="2"
+                Background="{StaticResource PharmacyGreen}"
+                Height="40"
+                Margin="0,10,0,0">
+            <TextBlock
+                      FontSize="18"
+                      Foreground="White"
+                      FontFamily="Bahnschrift SemiBold"
+                      HorizontalAlignment="Center"
+                      VerticalAlignment="Center" >
+                <TextBlock.Text>
+                    <MultiBinding Converter="{StaticResource BottomBarTextConverter}">
+                        <Binding Path="Products.Count" />
+                        <Binding Path="DisplayPage" />
+                        <Binding Path="TotalPages" />
+                    </MultiBinding>
+                </TextBlock.Text>
+            </TextBlock>
+        </Border>
+    </Grid>
+</Window>

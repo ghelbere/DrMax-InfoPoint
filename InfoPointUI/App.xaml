@@ -1,0 +1,122 @@
+﻿<Application x:Class="InfoPointUI.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="clr-namespace:InfoPointUI"
+             xmlns:converters="clr-namespace:InfoPointUI.Converters"
+             >
+    <Application.Resources>
+
+        <!-- 🎨 Paletă Dr.Max ca SolidColorBrush -->
+        <SolidColorBrush x:Key="DrMaxRed">#E30613</SolidColorBrush>
+        <SolidColorBrush x:Key="DrMaxDark">#B0000F</SolidColorBrush>
+        <SolidColorBrush x:Key="DrMaxText">#333333</SolidColorBrush>
+        <SolidColorBrush x:Key="PharmacyGreen">#28A745</SolidColorBrush>
+        <SolidColorBrush x:Key="PharmacyGreenSoft">#F4FFF4</SolidColorBrush>
+
+        <!-- Optional subtle shadow for tile depth -->
+        <DropShadowEffect x:Key="TileShadow"
+                  BlurRadius="8"
+                  ShadowDepth="2"
+                  Color="#44000000" />
+
+
+
+        <Style x:Key="SearchBoxStyle" TargetType="TextBox">
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="FontSize" Value="22"/>
+            <Setter Property="Padding" Value="8"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PharmacyGreen}"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource DrMaxText}"/>
+            <Setter Property="FontFamily" Value="Bahnschrift"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="TextBox">
+                        <Border x:Name="border"
+                            Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}">
+                            <Grid>
+                                <!-- 🔍 Content text -->
+                                <Grid VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                    <ScrollViewer x:Name="PART_ContentHost"
+                                          Focusable="False"
+                                          HorizontalScrollBarVisibility="Hidden"
+                                          VerticalScrollBarVisibility="Hidden"
+                                          Margin="0,0,30,0"/>
+                                    <!-- space for icon -->
+                                </Grid>
+
+                                <!-- 🔍 Icon -->
+                                <TextBlock Text="&#xE721;" 
+                                   FontFamily="Segoe MDL2 Assets"
+                                   FontSize="18"
+                                   Foreground="#999"
+                                   HorizontalAlignment="Right"
+                                   VerticalAlignment="Center"
+                                   Margin="0,0,8,0"
+                                   IsHitTestVisible="False"/>
+                        </Grid>
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsKeyboardFocused" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="Green"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="border" Property="BorderBrush" Value="Green"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter TargetName="border" Property="Opacity" Value="0.5"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
+
+
+        <!-- 🟥 Stil pentru butonul Caută -->
+        <Style x:Key="SearchButtonStyle" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource PharmacyGreen}"/>
+            <Setter Property="Foreground" Value="White"/>
+            <Setter Property="FontWeight" Value="Bold"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Width" Value="100"/>
+        </Style>
+
+        <!-- 🟩 Butoane de categorie -->
+        <Style x:Key="CategoryButtonStyle" TargetType="Button">
+            <Setter Property="Width" Value="120"/>
+            <Setter Property="Height" Value="44"/>
+            <Setter Property="Margin" Value="0,0,10,0"/>
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="FontFamily" Value="Segoe UI"/>
+            <Setter Property="BorderThickness" Value="2"/>
+            <Setter Property="BorderBrush" Value="{StaticResource PharmacyGreen}"/>
+            <Setter Property="Background" Value="White"/>
+            <Setter Property="Foreground" Value="{StaticResource PharmacyGreen}"/>
+        </Style>
+
+        <!-- 🔴 Stil activ pentru categorie selectată -->
+        <Style x:Key="CategoryButtonSelectedStyle"
+               BasedOn="{StaticResource CategoryButtonStyle}" TargetType="Button">
+            <Setter Property="Background" Value="{StaticResource DrMaxRed}"/>
+            <Setter Property="Foreground" Value="White"/>
+        </Style>
+
+        <!-- 🔧 Converter stiluri categorie -->
+        <converters:CategoryStyleSelector x:Key="CategoryStyleSelector"/>
+        <converters:CurrencyConverter x:Key="CurrencyConverter" />
+        <converters:ImageUrlFallbackConverter x:Key="ImageUrlFallbackConverter" />
+        <converters:BottomBarTextConverter x:Key="BottomBarTextConverter" />
+        <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter" />
+    </Application.Resources>
+</Application>
