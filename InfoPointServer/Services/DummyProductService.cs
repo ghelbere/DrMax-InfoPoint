@@ -35,7 +35,7 @@ public class DummyProductService : IProductService
                 Name = $"Paracetamol {i}",
                 Price = 9.50m,
                 Location = $"Zona rece {1 + i}",
-                ImageUrl = "https://allmedfairfax.com/wp-content/uploads/2024/03/medications-1853400_1280.jpg",
+                ImageUrl = "https://images.rawpixel.com/image_png_social_landscape/cHJpdmF0ZS9sci9pbWFnZXMvd2Vic2l0ZS8yMDIzLTExL3Jhd3BpeGVsb2ZmaWNlMV9hX3NpbXBsZV95ZXRfcmVhbGlzdGljX3Bob3RvX29mX2FfY29sbGVjdGlvbl9vZl8yN2JkMzE4OS1hZTI4LTQyMGItOTkwYy1hN2ViZDMwMDZjZjIucG5n.png",
                 Category = "Durere"
             });
             allProducts.Add(new()
@@ -54,7 +54,7 @@ public class DummyProductService : IProductService
                 Price = 27.99m,
                 OriginalPrice = 38.99m,
                 Location = $"Raft {1 + i}",
-                ImageUrl = "https://assets.stickpng.com/images/5cb77beda7c7755bf004c11d.png",
+                ImageUrl = @"nurofen_forte_400.png",
                 Category = "Durere"
             });
             allProducts.Add(new()

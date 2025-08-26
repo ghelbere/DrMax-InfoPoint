@@ -37,9 +37,11 @@
                 <Image Source="{Binding ImageUrl, Converter={StaticResource ImageUrlFallbackConverter}}"
                        Width="100" Height="100"
                        Stretch="Uniform"
+                       SnapsToDevicePixels="True"
+                       UseLayoutRounding="True"
                        HorizontalAlignment="Center"
                        ImageFailed="OnImageFailed"
-                       Margin="0,0,0,4"/>
+                       Margin="0,5,0,4"/>
 
                 <TextBlock Text="{Binding Name}"
                            FontSize="16"
@@ -83,7 +85,7 @@
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
-                            Margin="0,4,0,0"
+                            Margin="0,-1,0,0"
                             Opacity="0.9">
 
                     <Image Source="pack://application:,,,/InfoPointUI;component/Assets/Images/gps_pin.png"

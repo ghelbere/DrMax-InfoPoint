@@ -13,6 +13,7 @@
     <None Remove="Assets\Images\empty_image.png" />
     <None Remove="Assets\Images\gps_pin.png" />
     <None Remove="Assets\Images\nurofen400.png" />
+    <None Remove="Assets\Images\nurofen_forte_400.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -30,6 +31,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Images\nurofen400.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\nurofen_forte_400.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>
