@@ -62,7 +62,7 @@
 
                                 <!-- 📝 Placeholder vizual -->
                                 <TextBlock Text="Căutare după produs, brand sau categorie..."
-                                   FontSize="18"
+                                   FontSize="16"
                                    Foreground="#999"
                                    FontFamily="Bahnschrift"
                                    Margin="8,0,30,0"
