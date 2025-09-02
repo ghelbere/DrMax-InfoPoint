@@ -21,11 +21,8 @@
     <Grid x:Name="MainGrid" Margin="20">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
-            <!-- Header -->
             <RowDefinition Height="*" />
-            <!-- Produse + navigare -->
             <RowDefinition Height="Auto" />
-            <!-- Bara paginare -->
         </Grid.RowDefinitions>
 
         <!-- 🔝 Header -->
@@ -44,8 +41,9 @@
             <!-- 🔍 Search și categorii -->
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBox Style="{StaticResource SearchBoxStyle}"
-                         Width="360"
-                         Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}" />
+                         Width="460"
+                         Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"
+                         Tag="Căutare după nume produs, brand sau categorie..." />
 
                 <Button Content="Toate"
                         Margin="20,0,10,0"
@@ -78,7 +76,7 @@
                 <ColumnDefinition Width="80" />
             </Grid.ColumnDefinitions>
 
-            <!-- ◀️ Zona stânga -->
+            <!-- ◀️ Navigare stânga -->
             <Border Grid.Column="0" Background="#20FFFFFF" Cursor="Hand">
                 <Border.InputBindings>
                     <MouseBinding Gesture="LeftClick" Command="{Binding PreviousPageCommand}" />
@@ -97,7 +95,7 @@
                 </Border.Style>
             </Border>
 
-            <!-- 🧃 Tile-uri fluid responsive -->
+            <!-- 🧃 Tile-uri produse -->
             <ListBox Grid.Column="1"
                      ItemsSource="{Binding Products}"
                      Background="Transparent"
@@ -118,7 +116,7 @@
                 </ListBox.ItemTemplate>
             </ListBox>
 
-            <!-- ▶️ Zona dreapta -->
+            <!-- ▶️ Navigare dreapta -->
             <Border Grid.Column="2" Background="#20FFFFFF" Cursor="Hand">
                 <Border.InputBindings>
                     <MouseBinding Gesture="LeftClick" Command="{Binding NextPageCommand}" />
@@ -138,17 +136,16 @@
             </Border>
         </Grid>
 
-        <!-- 💚 Bara paginării -->
+        <!-- 💚 Bara paginare -->
         <Border Grid.Row="2"
                 Background="{StaticResource PharmacyGreen}"
                 Height="40"
                 Margin="0,10,0,0">
-            <TextBlock
-                      FontSize="18"
-                      Foreground="White"
-                      FontFamily="Bahnschrift SemiBold"
-                      HorizontalAlignment="Center"
-                      VerticalAlignment="Center" >
+            <TextBlock FontSize="18"
+                       Foreground="White"
+                       FontFamily="Bahnschrift SemiBold"
+                       HorizontalAlignment="Center"
+                       VerticalAlignment="Center">
                 <TextBlock.Text>
                     <MultiBinding Converter="{StaticResource BottomBarTextConverter}">
                         <Binding Path="Products.Count" />

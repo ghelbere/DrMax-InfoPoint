@@ -9,30 +9,30 @@
              Cursor="Hand">
 
     <Border CornerRadius="10"
-            BorderBrush="#1B873E"
+            BorderBrush="{StaticResource PharmacyGreen}"
             BorderThickness="2"
-            Background="#F8FFF8"
+            Background="{StaticResource PharmacyGreenSoft}"
             Margin="10"
             Padding="12"
-            MouseLeftButtonUp="OnTileClicked">
+            MouseLeftButtonUp="OnTileClicked"
+            Effect="{StaticResource TileShadow}">
 
         <Grid>
-            <!-- 🏷️ Badge promoțional -->
-            <Border Background="#D80027"
-                CornerRadius="6"
-                Padding="6,2"
-                HorizontalAlignment="Left"
-                VerticalAlignment="Top"
-                Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVisibilityConverter}}"
-                Margin="-4,-4,0,0">
+            <!-- 🏷️ Badge promo -->
+            <Border Background="{StaticResource DrMaxRed}"
+                    CornerRadius="6"
+                    Padding="6,2"
+                    HorizontalAlignment="Left"
+                    VerticalAlignment="Top"
+                    Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVisibilityConverter}}"
+                    Margin="-4,-4,0,0">
                 <TextBlock Text="{Binding DiscountLabel}"
-                   Foreground="White"
-                   FontWeight="Bold"
-                   FontSize="13"/>
+                           Foreground="White"
+                           FontWeight="Bold"
+                           FontSize="13"/>
             </Border>
 
-
-            <!-- 📦 Conținut principal -->
+            <!-- 📦 Conținut produs -->
             <StackPanel>
                 <Image Source="{Binding ImageUrl, Converter={StaticResource ImageUrlFallbackConverter}}"
                        Width="100" Height="100"
@@ -56,51 +56,48 @@
                            Margin="0,2,0,2"/>
 
                 <StackPanel Orientation="Horizontal"
-            HorizontalAlignment="Center"
-            Margin="0,2,0,0">
+                            HorizontalAlignment="Center"
+                            Margin="0,2,0,0">
                     <TextBlock Text="Preț: "
-                       FontSize="15"
-                       FontFamily="Bahnschrift"
-                       FontWeight="SemiBold"
-                       Foreground="#1B873E"
-                       Margin="0,0,4,0" />
+                               FontSize="15"
+                               FontFamily="Bahnschrift"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource PharmacyGreen}"
+                               Margin="0,0,4,0" />
 
                     <TextBlock Text="{Binding Price, Converter={StaticResource CurrencyConverter}}"
-                       FontSize="15"
-                       FontFamily="Bahnschrift"
-                       FontWeight="SemiBold"
-                       Foreground="#1B873E"
-                       Margin="0,0,4,0" />
+                               FontSize="15"
+                               FontFamily="Bahnschrift"
+                               FontWeight="SemiBold"
+                               Foreground="{StaticResource PharmacyGreen}"
+                               Margin="0,0,4,0" />
 
                     <TextBlock Text="{Binding OriginalPrice, Converter={StaticResource CurrencyConverter}}"
-                       FontSize="13"
-                       FontFamily="Bahnschrift"
-                       Foreground="#888"
-                       TextDecorations="Strikethrough"
-                       Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                               FontSize="13"
+                               FontFamily="Bahnschrift"
+                               Foreground="#888"
+                               TextDecorations="Strikethrough"
+                               Visibility="{Binding HasDiscount, Converter={StaticResource BoolToVisibilityConverter}}"/>
                 </StackPanel>
-
-
 
                 <StackPanel Orientation="Horizontal"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             Margin="0,-1,0,0"
                             Opacity="0.9">
-
                     <Image Source="pack://application:,,,/InfoPointUI;component/Assets/Images/gps_pin.png"
-                        Width="24"
-                        Height="24"
-                        Margin="0,0,6,0"
-                        RenderOptions.BitmapScalingMode="HighQuality"/>
+                           Width="24"
+                           Height="24"
+                           Margin="0,0,6,0"
+                           RenderOptions.BitmapScalingMode="HighQuality"/>
 
                     <TextBlock Text="{Binding Location}"
-                        FontFamily="Bahnschrift"
-                        FontWeight="SemiBold"
-                        FontSize="15"
-                        Foreground="#333"
-                        Margin="0,4,0,0"
-                        TextAlignment="Center"/>
+                               FontFamily="Bahnschrift"
+                               FontWeight="SemiBold"
+                               FontSize="15"
+                               Foreground="{StaticResource DrMaxText}"
+                               Margin="0,4,0,0"
+                               TextAlignment="Center"/>
                 </StackPanel>
             </StackPanel>
         </Grid>
