@@ -24,6 +24,13 @@ namespace InfoPointUI.Views
             }
         }
 
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            SearchTextBox.Focus();
+            Keyboard.Focus(SearchTextBox); // pentru focus tastatură
+        }
+
+
         private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
         {
             // Dacă folosești pe tabletă, poți activa tastatura virtuală:
