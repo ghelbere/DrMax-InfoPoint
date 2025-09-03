@@ -42,8 +42,11 @@ namespace InfoPointUI.Converters
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
                     bitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
                     bitmap.EndInit();
+
+                    // this is a very strange condition that in my oppinion should be avoided, but looks like it works
                     if (!bitmap.IsFrozen && bitmap.CanFreeze)
                         bitmap.Freeze();
+
                     return bitmap;
                 }
                 
