@@ -12,6 +12,22 @@ namespace InfoPointUI.Converters
     {
         private static readonly string FallbackImageUri = @"pack://application:,,,/InfoPointUI;component/Assets/Images/empty_image.png";
 
+        private BitmapImage LoadImageFromUrl(string url)
+        {
+            using var client = new HttpClient();
+            var imageBytes = client.GetByteArrayAsync(url).Result;
+
+            using var stream = new MemoryStream(imageBytes);
+            var bitmap = new BitmapImage();
+            bitmap.BeginInit();
+            bitmap.StreamSource = stream;
+            bitmap.CacheOption = BitmapCacheOption.OnLoad;
+            bitmap.EndInit();
+            bitmap.Freeze();
+            return bitmap;
+        }
+
+
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             string? imageName = value as string;
@@ -36,20 +52,10 @@ namespace InfoPointUI.Converters
 
                 if (isImageFromUrl)
                 {
-                    var bitmap = new BitmapImage();
-                    bitmap.BeginInit();
-                    bitmap.UriSource = imageUri;
-                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
-                    bitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
-                    bitmap.EndInit();
-
-                    // this is a very strange condition that in my oppinion should be avoided, but looks like it works
-                    if (!bitmap.IsFrozen && bitmap.CanFreeze)
-                        bitmap.Freeze();
-
-                    return bitmap;
+                    return LoadImageFromUrl(imageName);
                 }
-                
+
+
                 return new BitmapImage(imageUri);
             }
             catch
