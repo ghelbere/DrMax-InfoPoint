@@ -2,6 +2,7 @@
 using System.IO;
 using System.Net.Http;
 using System.Reflection;
+using System.Security.Policy;
 using System.Windows.Data;
 using System.Windows.Media.Imaging;
 
@@ -21,14 +22,28 @@ namespace InfoPointUI.Converters
             try
             {
                 Uri imageUri;
+                bool isImageFromUrl = false;
 
                 if (Uri.IsWellFormedUriString(imageName, UriKind.Absolute))
                 {
                     imageUri = new Uri(imageName, UriKind.Absolute);
+                    isImageFromUrl = true;
                 }
                 else
                 {
                     imageUri = new Uri($"pack://application:,,,/InfoPointUI;component/Assets/Images/{imageName.ToLower()}", UriKind.Absolute);
+                }
+
+                if (isImageFromUrl)
+                {
+                    var bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.UriSource = imageUri;
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
+                    bitmap.EndInit();
+                    bitmap.Freeze();
+                    return bitmap;
                 }
                 
                 return new BitmapImage(imageUri);

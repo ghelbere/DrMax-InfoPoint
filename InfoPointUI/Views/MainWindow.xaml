@@ -35,7 +35,7 @@
 
             <!-- 🖼️ Logo -->
             <Image Source="https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Dr.Max_logo.svg/330px-Dr.Max_logo.svg.png"
-                   Height="48"
+                   Height="64"
                    VerticalAlignment="Center"
                    Margin="0,0,20,0" />
 
@@ -43,6 +43,7 @@
             <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
                 <TextBox x:Name="SearchTextBox"
                          Style="{StaticResource SearchBoxStyle}"
+                         Height="48"
                          Width="460"
                          Text="{Binding SearchTerm, UpdateSourceTrigger=PropertyChanged}"
                          Tag="Căutare după nume produs, brand sau categorie..." />

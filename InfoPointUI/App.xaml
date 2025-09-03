@@ -25,55 +25,110 @@
 
         <!-- 🔍 SearchBox -->
         <Style x:Key="SearchBoxStyle" TargetType="TextBox">
-            <Setter Property="Height" Value="48"/>
-            <Setter Property="FontSize" Value="22"/>
-            <Setter Property="Padding" Value="8"/>
-            <Setter Property="VerticalContentAlignment" Value="Center"/>
-            <Setter Property="BorderBrush" Value="{StaticResource PharmacyGreen}"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="{StaticResource DrMaxText}"/>
-            <Setter Property="FontFamily" Value="Bahnschrift"/>
-            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="TextBox">
-                        <Border x:Name="border"
-                        Background="{TemplateBinding Background}"
-                        BorderBrush="{TemplateBinding BorderBrush}"
-                        BorderThickness="{TemplateBinding BorderThickness}"
-                        CornerRadius="5">
+                        <Grid>
+                            <!-- Fundal -->
+                            <Border CornerRadius="12"
+                            Background="#FFF5F6F7"
+                            BorderBrush="#11000000"
+                            BorderThickness="1" />
+
+                            <!-- Masca pentru umbră -->
+                            <Border CornerRadius="12"
+                            Background="Transparent"
+                            IsHitTestVisible="False">
+                                <Border.OpacityMask>
+                                    <VisualBrush Stretch="Fill">
+                                        <VisualBrush.Visual>
+                                            <Border CornerRadius="12" Background="Black" />
+                                        </VisualBrush.Visual>
+                                    </VisualBrush>
+                                </Border.OpacityMask>
+
+                                <!-- Umbre -->
+                                <Grid Margin="1" IsHitTestVisible="False">
+                                    <Rectangle VerticalAlignment="Top" Height="10">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                                                <GradientStop Color="#26000000" Offset="0" />
+                                                <GradientStop Color="#00000000" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                    <Rectangle HorizontalAlignment="Left" Width="10">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                                <GradientStop Color="#26000000" Offset="0" />
+                                                <GradientStop Color="#00000000" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                    <Rectangle VerticalAlignment="Bottom" Height="10">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="0,1" EndPoint="0,0">
+                                                <GradientStop Color="#18FFFFFF" Offset="0" />
+                                                <GradientStop Color="#00FFFFFF" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                    <Rectangle HorizontalAlignment="Right" Width="10">
+                                        <Rectangle.Fill>
+                                            <LinearGradientBrush StartPoint="1,0" EndPoint="0,0">
+                                                <GradientStop Color="#18FFFFFF" Offset="0" />
+                                                <GradientStop Color="#00FFFFFF" Offset="1" />
+                                            </LinearGradientBrush>
+                                        </Rectangle.Fill>
+                                    </Rectangle>
+                                </Grid>
+                            </Border>
+
+                            <!-- Conținutul -->
                             <Grid>
-                                <ScrollViewer x:Name="PART_ContentHost"
-                                      Focusable="False"
-                                      HorizontalScrollBarVisibility="Hidden"
-                                      VerticalScrollBarVisibility="Hidden"
-                                      Margin="0,0,30,0"/>
-
-                                <!-- 🔍 Icon -->
-                                <TextBlock Text="&#xE721;"
-                                   FontFamily="Segoe MDL2 Assets"
-                                   FontSize="18"
-                                   Foreground="#999"
-                                   HorizontalAlignment="Right"
-                                   VerticalAlignment="Center"
-                                   Margin="0,0,8,0"
-                                   IsHitTestVisible="False"/>
-
-                                <!-- 📝 Placeholder vizual -->
-                                <TextBlock Text="Căutare după produs, brand sau categorie..."
+                                <!-- Icon -->
+                                <TextBlock Text="🔍"
                                    FontSize="16"
-                                   Foreground="#999"
-                                   FontFamily="Bahnschrift"
-                                   Margin="8,0,30,0"
+                                   Foreground="#7A7A7A"
                                    VerticalAlignment="Center"
-                                   IsHitTestVisible="False"
-                                   Visibility="{Binding Text.IsEmpty, RelativeSource={RelativeSource TemplatedParent}, Converter={StaticResource BoolToVisibilityConverter}}"/>
+                                   HorizontalAlignment="Right"
+                                   Margin="0,0,14,0"
+                                   IsHitTestVisible="False" />
+
+                                <!-- Watermark -->
+                                <TextBlock Text="{TemplateBinding Tag}"
+                                   Foreground="#7A8A94"
+                                   Margin="14,0,44,0"
+                                   VerticalAlignment="Center"
+                                   IsHitTestVisible="False">
+                                    <TextBlock.Style>
+                                        <Style TargetType="TextBlock">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Text, RelativeSource={RelativeSource TemplatedParent}}" Value="">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </TextBlock.Style>
+                                </TextBlock>
+
+                                <!-- TextBox content -->
+                                <ScrollViewer x:Name="PART_ContentHost"
+                                      Margin="12,8,42,8"
+                                      VerticalAlignment="Center"
+                                      Focusable="False" />
                             </Grid>
-                        </Border>
+                        </Grid>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="#222" />
+            <Setter Property="FontSize" Value="16" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+            <Setter Property="CaretBrush" Value="#20AA55" />
         </Style>
 
         <!-- 🟩 Butoane categorie -->
