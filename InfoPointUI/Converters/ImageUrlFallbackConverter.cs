@@ -42,7 +42,8 @@ namespace InfoPointUI.Converters
                     bitmap.CacheOption = BitmapCacheOption.OnLoad;
                     bitmap.CreateOptions = BitmapCreateOptions.IgnoreColorProfile;
                     bitmap.EndInit();
-                    bitmap.Freeze();
+                    if (!bitmap.IsFrozen && bitmap.CanFreeze)
+                        bitmap.Freeze();
                     return bitmap;
                 }
                 
