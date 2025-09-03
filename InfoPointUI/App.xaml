@@ -25,7 +25,7 @@
 
         <!-- 🔍 SearchBox -->
         <Style x:Key="SearchBoxStyle" TargetType="TextBox">
-            <Setter Property="Height" Value="44"/>
+            <Setter Property="Height" Value="48"/>
             <Setter Property="FontSize" Value="22"/>
             <Setter Property="Padding" Value="8"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
