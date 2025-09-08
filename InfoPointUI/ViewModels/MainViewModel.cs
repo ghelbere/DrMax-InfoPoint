@@ -1,9 +1,13 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel;
+using System.IO;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
 using InfoPointUI.Commands;
 using InfoPointUI.Models;
 using InfoPointUI.Services;
@@ -102,7 +106,7 @@ public class MainViewModel : INotifyPropertyChanged
         TotalPages = 1;         // sau 0, dar ideal e să fie > 0
 
         // Debounce timer for searching
-        debounceTimer = new(150);
+        debounceTimer = new(500);
         debounceTimer.Elapsed += async (_, _) => await SearchAsync();
         debounceTimer.AutoReset = false;
 
@@ -135,24 +139,79 @@ public class MainViewModel : INotifyPropertyChanged
 
     public async Task SearchAsync()
     {
-        string? categoryParam = SelectedCategory == "Toate" ? null : SelectedCategory;
-
         var result = await _api.SearchProductsPagedAsync(
             SearchTerm,
             TabletId,
-            categoryParam,
+            SelectedCategory == "Toate" ? null : SelectedCategory,
             CurrentPage,
             PageSize);
 
         Application.Current.Dispatcher.Invoke(() =>
         {
-            // daca nu se actualizeaza Products in acest fel, binding-urile din interfata nu functioneaza
             Products.Clear();
             foreach (var product in result.Items)
+            {
                 Products.Add(product);
+                _ = LoadProductImageAsync(product); // fire-and-forget
+            }
 
-            TotalPages = result.TotalPages; // 👈 actualizat din server
+            TotalPages = result.TotalPages;
         });
+    }
+
+    private async Task LoadProductImageAsync(ProductDto product)
+    {
+        ImageSource? image = null;
+
+        // 1️⃣ Verifică dacă imaginea există ca StaticResource în App.xaml
+        if (Application.Current.Resources.Contains(product.ImageUrl.ToLower()))
+            try 
+            {
+                var uriString = Application.Current.Resources[product.ImageUrl.ToLower()] as string;
+                if (!string.IsNullOrEmpty(uriString))
+                {
+                    var bmp = new BitmapImage();
+                    bmp.BeginInit();
+                    bmp.UriSource = new Uri(uriString, UriKind.Absolute);
+                    bmp.CacheOption = BitmapCacheOption.OnLoad;
+                    bmp.EndInit();
+                    bmp.Freeze();
+                    image = bmp;
+                }
+            } catch {
+                image = null;
+            }
+
+        // 2️⃣ Dacă nu e resursă, încearcă să o încarce din URL
+        if (image == null && Uri.TryCreate(product.ImageUrl, UriKind.Absolute, out Uri uri) &&
+            (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
+        {
+            try
+            {
+                using var http = new HttpClient();
+                var bytes = await http.GetByteArrayAsync(uri);
+                using var ms = new MemoryStream(bytes);
+                var bmp = new BitmapImage();
+                bmp.BeginInit();
+                bmp.StreamSource = ms;
+                bmp.CacheOption = BitmapCacheOption.OnLoad;
+                bmp.EndInit();
+                bmp.Freeze();
+                image = bmp;
+            }
+            catch
+            {
+                // Ignorăm excepția, trecem la fallback
+            }
+        }
+
+        // 3️⃣ Fallback: imagine default
+        if (image == null)
+        {
+            image = new BitmapImage(new Uri("pack://application:,,,/InfoPointUI;component/Assets/Images/empty_image.png"));
+        }
+
+        product.ProductImage = image;
     }
 
 

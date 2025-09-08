@@ -3,10 +3,16 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:converters="clr-namespace:InfoPointUI.Converters">
     <Application.Resources>
-        <!-- 🔧 Convertoare -->
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Resources/ImageUris.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+
+            <!-- 🔧 Convertoare -->
         <converters:CategoryStyleSelector x:Key="CategoryStyleSelector"/>
         <converters:CurrencyConverter x:Key="CurrencyConverter"/>
-        <converters:ImageUrlFallbackConverter x:Key="ImageUrlFallbackConverter"/>
+        <!--<converters:ImageUrlFallbackConverter x:Key="ImageUrlFallbackConverter"/>-->
         <converters:BottomBarTextConverter x:Key="BottomBarTextConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
@@ -166,5 +172,6 @@
             <Setter Property="Foreground" Value="White"/>
         </Style>
 
+        </ResourceDictionary>
     </Application.Resources>
 </Application>

@@ -34,8 +34,9 @@
 
             <!-- 📦 Conținut produs -->
             <StackPanel>
-                <Image Source="{Binding ImageUrl, Converter={StaticResource ImageUrlFallbackConverter}}"
+                <Image Source="{Binding ProductImage}"
                        Width="100" Height="100"
+                       RenderOptions.BitmapScalingMode="HighQuality"
                        Stretch="Uniform"
                        SnapsToDevicePixels="True"
                        UseLayoutRounding="True"

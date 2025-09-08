@@ -18,6 +18,7 @@
 
   <ItemGroup>
     <Folder Include="Controls\" />
+    <Folder Include="Resources\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Services\" />
 

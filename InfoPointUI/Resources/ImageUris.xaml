@@ -1,0 +1,7 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="nurofen400.png">pack://application:,,,/Assets/Images/nurofen400.png</sys:String>
+    <sys:String x:Key="nurofen_forte_400.png">pack://application:,,,/Assets/Images/nurofen_forte_400.png</sys:String>
+    <sys:String x:Key="empty_image.png">pack://application:,,,/Assets/Images/empty_image.png</sys:String>
+</ResourceDictionary>
