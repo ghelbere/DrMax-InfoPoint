@@ -19,7 +19,10 @@
         <viewModels:MainViewModel />
     </Window.DataContext>
 
-    <Grid x:Name="MainGrid" Margin="20">
+    <Grid x:Name="MainGrid" 
+          Margin="20"
+          IsManipulationEnabled="True"
+          Background="Transparent">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -99,7 +102,8 @@
             </Border>
 
             <!-- 🧃 Tile-uri produse -->
-            <ListBox Grid.Column="1"
+            <ListBox x:Name="ProductItemsControl"
+                     Grid.Column="1"
                      ItemsSource="{Binding Products}"
                      Background="Transparent"
                      BorderThickness="0"
@@ -108,7 +112,7 @@
                      SelectionMode="Single">
                 <ListBox.ItemsPanel>
                     <ItemsPanelTemplate>
-                        <WrapPanel IsItemsHost="True" />
+                        <WrapPanel IsItemsHost="True" Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ListBox.ItemsPanel>
 

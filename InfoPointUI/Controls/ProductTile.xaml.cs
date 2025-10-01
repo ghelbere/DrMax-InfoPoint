@@ -11,10 +11,18 @@ namespace InfoPointUI.Controls
     public partial class ProductTile : UserControl
     {
         private const string FallBackImageName = @"pack://application:,,,/InfoPointUI;component/Assets/Images/empty_image.png";
+        private Point _touchStart;
+        private Point _mouseStart;
+        private const double TapThreshold = 10;
 
         public ProductTile()
         {
             InitializeComponent();
+
+            TouchDown += OnTouchDown;
+            TouchUp += OnTouchUp;
+            PreviewMouseLeftButtonDown += OnMouseDown;
+            PreviewMouseLeftButtonUp += OnMouseUp;
         }
 
         public static readonly DependencyProperty ProductProperty =
@@ -43,7 +51,37 @@ namespace InfoPointUI.Controls
             }
         }
 
-        private async void OnTileClicked(object sender, MouseButtonEventArgs e)
+        private void OnTouchDown(object sender, TouchEventArgs e)
+        {
+            _touchStart = e.GetTouchPoint(this).Position;
+        }
+
+        private async void OnTouchUp(object sender, TouchEventArgs e)
+        {
+            var end = e.GetTouchPoint(this).Position;
+            var deltaX = Math.Abs(end.X - _touchStart.X);
+            var deltaY = Math.Abs(end.Y - _touchStart.Y);
+
+            if (deltaX < TapThreshold && deltaY < TapThreshold)
+                await ShowProductDetailsAsync();
+        }
+
+        private void OnMouseDown(object sender, MouseButtonEventArgs e)
+        {
+            _mouseStart = e.GetPosition(this);
+        }
+
+        private async void OnMouseUp(object sender, MouseButtonEventArgs e)
+        {
+            var end = e.GetPosition(this);
+            var deltaX = Math.Abs(end.X - _mouseStart.X);
+            var deltaY = Math.Abs(end.Y - _mouseStart.Y);
+
+            if (deltaX < TapThreshold && deltaY < TapThreshold)
+                await ShowProductDetailsAsync();
+        }
+
+        private async Task ShowProductDetailsAsync()
         {
             if (Product is ProductDto p)
             {

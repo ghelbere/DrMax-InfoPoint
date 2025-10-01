@@ -15,7 +15,7 @@ public class ProductDto : INotifyPropertyChanged
     public bool HasDiscount => OriginalPrice.HasValue && OriginalPrice > Price;
     public int DiscountPercentage =>
         HasDiscount ? (int)Math.Round((OriginalPrice!.Value - Price) / OriginalPrice.Value * 100) : 0;
-    public string DiscountLabel => HasDiscount ? $"-{DiscountPercentage}% promo" : string.Empty;
+    public string DiscountLabel => HasDiscount ? $"-{DiscountPercentage}%" : string.Empty;
 
     private ImageSource? _productImage;
     public ImageSource? ProductImage

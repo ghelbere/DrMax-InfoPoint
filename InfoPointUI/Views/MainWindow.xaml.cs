@@ -2,11 +2,15 @@
 using System.Windows.Input;
 using InfoPointUI.Models;
 using InfoPointUI.ViewModels;
+using InfoPointUI.Helpers;
 
 namespace InfoPointUI.Views
 {
     public partial class MainWindow : Window
     {
+        private MainViewModel? ViewModel => DataContext as MainViewModel;
+        private SwipeGestureHandler? _swipeHandler;
+
         public MainWindow()
         {
             InitializeComponent();
@@ -27,27 +31,19 @@ namespace InfoPointUI.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             SearchTextBox.Focus();
-            Keyboard.Focus(SearchTextBox); // pentru focus tastatură
-        }
+            Keyboard.Focus(SearchTextBox);
 
+            _swipeHandler = new SwipeGestureHandler(MainGrid, ProductItemsControl)
+            {
+                OnSwipeLeft = () => ViewModel?.NextPageCommand.Execute(null),
+                OnSwipeRight = () => ViewModel?.PreviousPageCommand.Execute(null)
+            };
+        }
 
         private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
         {
             // Dacă folosești pe tabletă, poți activa tastatura virtuală:
             // Process.Start("C:\\Program Files\\Common Files\\Microsoft Shared\\ink\\TabTip.exe");
-        }
-
-        private void TileClicked(object sender, MouseButtonEventArgs e)
-        {
-            if (sender is FrameworkElement tile && tile.DataContext is ProductDto product)
-            {
-                MessageBox.Show(
-                    $"📦 {product.Name}\n💰 {product.Price:C}\n📍 {product.Location}",
-                    "Detalii produs",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information
-                );
-            }
         }
     }
 }

@@ -12,7 +12,7 @@
             <!-- 🔧 Convertoare -->
         <converters:CategoryStyleSelector x:Key="CategoryStyleSelector"/>
         <converters:CurrencyConverter x:Key="CurrencyConverter"/>
-        <!--<converters:ImageUrlFallbackConverter x:Key="ImageUrlFallbackConverter"/>-->
+        <converters:ImageUrlFallbackConverter x:Key="ImageUrlFallbackConverter"/>
         <converters:BottomBarTextConverter x:Key="BottomBarTextConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
 
@@ -25,8 +25,8 @@
 
         <!-- ✨ Umbre pentru tile-uri -->
         <DropShadowEffect x:Key="TileShadow"
-                          BlurRadius="8"
-                          ShadowDepth="2"
+                          BlurRadius="6"
+                          ShadowDepth="1"
                           Color="#44000000" />
 
         <!-- 🔍 SearchBox -->
