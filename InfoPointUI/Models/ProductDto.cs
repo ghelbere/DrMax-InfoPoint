@@ -5,12 +5,16 @@ using System.Windows.Media;
 public class ProductDto : INotifyPropertyChanged
 {
     public int Id { get; set; }
+    public string Sku { get; set; } = string.Empty; // din MSSQL
     public string Name { get; set; } = "";
     public decimal Price { get; set; }
     public decimal? OriginalPrice { get; set; }
     public string Category { get; set; } = "Durere";
     public string Location { get; set; } = "";
     public string ImageUrl { get; set; } = "";
+    public string Block { get; set; } = string.Empty;    // din Quant
+    public string PositionHint { get; set; } = string.Empty; // din Quant
+    public string PlanogramImageBase64 { get; set; } = string.Empty; // din Quant
 
     public bool HasDiscount => OriginalPrice.HasValue && OriginalPrice > Price;
     public int DiscountPercentage =>

@@ -1,56 +1,52 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using InfoPointServer.Models;
 using InfoPointServer.Services;
+using Microsoft.AspNetCore.Mvc;
 
-namespace InfoPointServer.Controllers;
-
-[ApiController]
-[Route("api/products")]
-public class ProductsController : ControllerBase
+namespace InfoPointServer.Controllers
 {
-    private readonly IProductService _service;
-    private readonly ILogger<ProductsController> _logger;
-
-    public ProductsController(IProductService service, ILogger<ProductsController> logger)
+    [ApiController]
+    [Route("api/[controller]")]
+    public class ProductsController : ControllerBase
     {
-        _service = service;
-        _logger = logger;
-    }
+        private readonly ProductSearchService _productSearchService;
+        private readonly IConfiguration _config;
+        private readonly ILogger<ProductsController> _logger;
 
-    // 🔍 Endpoint clasic — fără paginare
-    [HttpGet]
-    public IActionResult Get(
-        [FromQuery] string term,
-        [FromQuery] string? category)
-    {
-        var requestTime = DateTime.UtcNow;
-        var tabletId = Request.Headers["Tablet-ID"].FirstOrDefault() ?? "UNKNOWN";
+        public ProductsController(ProductSearchService productSearchService, IConfiguration config, ILogger<ProductsController> logger)
+        {
+            _productSearchService = productSearchService;
+            _config = config;
+            _logger = logger;
+        }
 
-        _logger.LogInformation($"📡 Tablet {tabletId} searched for '{term}', category '{category}' at {requestTime}");
+        [HttpGet]
+        public async Task<IActionResult> SearchProducts(
+            CancellationToken cancellationToken,
+            [FromQuery] string query,
+            [FromQuery] string? category,
+            [FromQuery] int page = 0,
+            [FromQuery] int pageSize = 15
+            )
+        {
+            var requestTime = DateTime.UtcNow;
+            var tabletId = Request.Headers["Tablet-ID"].FirstOrDefault() ?? "UNKNOWN";
 
-        var results = _service.Search(term, category);
+            _logger.LogInformation($"📃 Tablet {tabletId} requested page {page} of term '{query}', category '{category}' at {requestTime}");
 
-        _logger.LogInformation($"✅ Returned {results.Count} items in {DateTime.UtcNow.Subtract(requestTime).TotalMilliseconds:N0} ms");
+            var storeId = _config["Store:Id"]; // ← din config
 
-        return Ok(results);
-    }
+            List<ProductDto>? products = null;
+            try
+            {
+                products = await _productSearchService.SearchProductsAsync(query, category, storeId ?? "UNKNOWN", cancellationToken);
 
-    // 📦 Nou: Endpoint cu paginare
-    [HttpGet("paged")]
-    public IActionResult GetPaged(
-        [FromQuery] string term,
-        [FromQuery] string? category,
-        [FromQuery] int page = 0,
-        [FromQuery] int pageSize = 40)
-    {
-        var requestTime = DateTime.UtcNow;
-        var tabletId = Request.Headers["Tablet-ID"].FirstOrDefault() ?? "UNKNOWN";
+                _logger.LogInformation($"🧮 Returned {products.Count} items from page {page} in {DateTime.UtcNow.Subtract(requestTime).TotalMilliseconds:N0} ms");
+            }
+            catch (Exception ex) {
+                return BadRequest(new { error = ex.Message });
+            }
 
-        _logger.LogInformation($"📃 Tablet {tabletId} requested page {page} of term '{term}', category '{category}' at {requestTime}");
-
-        var pagedResults = _service.Search(term, category, page, pageSize);
-
-        _logger.LogInformation($"🧮 Returned {pagedResults.Items.Count} items from page {page} in {DateTime.UtcNow.Subtract(requestTime).TotalMilliseconds:N0} ms");
-
-        return Ok(pagedResults);
+            return Ok(products);
+        }
     }
 }

@@ -1,5 +1,6 @@
 
 using InfoPointServer.Services;
+using System.Net.Http.Headers;
 
 namespace InfoPointServer
 {
@@ -8,6 +9,7 @@ namespace InfoPointServer
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            var config = builder.Configuration;
 
             builder.WebHost.ConfigureKestrel(options =>
             {
@@ -21,7 +23,27 @@ namespace InfoPointServer
             // Add services to the container.
 
             builder.Services.AddControllers();
+            builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
             builder.Services.AddSingleton<IProductService, DummyProductService>();
+            builder.Services.AddSingleton<QuantAuthService>();
+            builder.Services.AddHttpClient("QuantApi", client =>
+            {
+                client.BaseAddress = new Uri("https://api.quantretail.com");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+            });
+
+            builder.Services.AddTransient<QuantPlacementService>(sp =>
+            {
+                var httpClient = sp.GetRequiredService<IHttpClientFactory>().CreateClient("QuantApi");
+                var authService = sp.GetRequiredService<QuantAuthService>();
+                var config = sp.GetRequiredService<IConfiguration>();
+                var username = config["Quant:Username"]??"";
+                var password = config["Quant:Password"]??"";
+                return new QuantPlacementService(httpClient, authService, username, password);
+            });
+
+            builder.Services.AddTransient<ProductSearchService>();
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
