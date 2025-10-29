@@ -2,10 +2,14 @@
 using InfoPointServer.Services;
 using Microsoft.AspNetCore.Mvc;
 
+
+
 namespace InfoPointServer.Controllers
 {
-    [ApiController]
-    [Route("api/[controller]")]
+    // UNCOMMENT this to use /api/products route when removing DummyProductsController  
+
+    //[ApiController]
+    //[Route("api/[controller]")]   
     public class ProductsController : ControllerBase
     {
         private readonly ProductSearchService _productSearchService;
@@ -50,3 +54,5 @@ namespace InfoPointServer.Controllers
         }
     }
 }
+
+

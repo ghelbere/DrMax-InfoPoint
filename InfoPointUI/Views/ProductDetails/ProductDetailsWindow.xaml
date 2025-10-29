@@ -1,0 +1,15 @@
+﻿<Window x:Class="InfoPointUI.Views.ProductDetails.ProductDetailsWindow"
+                xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="clr-namespace:InfoPointUI.ViewModels"
+        Title="Detalii Produs" Height="450" Width="600"
+        Background="#FFF9F9F9" WindowStartupLocation="CenterScreen"
+        ResizeMode="NoResize"
+        Loaded="Window_Loaded">
+
+    <Frame x:Name="FrameHost" NavigationUIVisibility="Hidden"
+           Navigating="MainFrame_Navigating"
+           Navigated="MainFrame_Navigated"/>
+
+</Window>
+

@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Images\drmax_logo.png" />
     <None Remove="Assets\Images\empty_image.png" />
     <None Remove="Assets\Images\gps_pin.png" />
     <None Remove="Assets\Images\nurofen400.png" />
@@ -19,12 +20,12 @@
   <ItemGroup>
     <Folder Include="Controls\" />
     <Folder Include="Resources\" />
-    <Folder Include="ViewModels\" />
     <Folder Include="Services\" />
 
   </ItemGroup>
 
   <ItemGroup>
+    <Resource Include="Assets\Images\drmax_logo.png" />
     <Resource Include="Assets\Images\empty_image.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>

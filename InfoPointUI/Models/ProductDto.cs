@@ -7,6 +7,8 @@ public class ProductDto : INotifyPropertyChanged
     public int Id { get; set; }
     public string Sku { get; set; } = string.Empty; // din MSSQL
     public string Name { get; set; } = "";
+
+    public string Description { get; set; } = "Test product Description";
     public decimal Price { get; set; }
     public decimal? OriginalPrice { get; set; }
     public string Category { get; set; } = "Durere";

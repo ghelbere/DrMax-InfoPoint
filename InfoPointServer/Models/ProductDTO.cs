@@ -5,6 +5,7 @@
         public int Id { get; set; }                     // din MSSQL
         public string Sku { get; set; } = string.Empty; // din MSSQL
         public string Name { get; set; } = string.Empty;
+        public string Description { get; set; } = "";
         public decimal Price { get; set; }
         public decimal? OriginalPrice { get; set; }
         public string Location { get; set; } = string.Empty; // din Quant

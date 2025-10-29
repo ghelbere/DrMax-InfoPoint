@@ -1,10 +1,11 @@
-﻿using System.Net.Http;
+﻿using InfoPointUI.Models;
+using InfoPointUI.Views.ProductDetails;
+using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
-using InfoPointUI.Models;
 
 namespace InfoPointUI.Controls
 {
@@ -86,12 +87,14 @@ namespace InfoPointUI.Controls
             if (Product is ProductDto p)
             {
                 bool imgOk = await IsImageUrlValidAsync(p.ImageUrl);
-                MessageBox.Show(
+               /* MessageBox.Show(
                     $"📦 {p.Name}\n💰 {p.Price:C}\n📍 {p.Location}\n🖼️ Imagine validă: {imgOk}",
                     "Detalii produs",
                     MessageBoxButton.OK,
                     MessageBoxImage.Information
-                );
+                );*/
+                var detailsWindow = new ProductDetailsWindow(p);
+                detailsWindow.ShowDialog();
             }
         }
 
