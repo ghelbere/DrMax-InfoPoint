@@ -88,6 +88,14 @@ namespace InfoPointUI.Views.Standby
             var storyboard = new Storyboard();
             storyboard.Children.Add(animation);
             storyboard.Begin();
+
+            HiddenInput.Focus(); // forțează focusul pe TextBox-ul invizibil
+        }
+
+        private void HiddenInput_KeyDown(object sender, KeyEventArgs e)
+        {
+            StandbyClicked?.Invoke(this, EventArgs.Empty);
+            this.Hide();
         }
 
     }
