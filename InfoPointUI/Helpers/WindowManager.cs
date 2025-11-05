@@ -16,7 +16,7 @@ namespace InfoPointUI.Helpers
         /// <summary>
         /// Returnează instanța ferestrei de tipul T, dacă există.
         /// </summary>
-        public static T GetWindow<T>() where T : Window
+        public static T? GetWindow<T>() where T : Window
         {
             return Application.Current.Windows.OfType<T>().FirstOrDefault();
         }

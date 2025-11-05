@@ -15,8 +15,8 @@ namespace InfoPointUI.Helpers
         private Point _mouseStart;
         private bool _isDragging;
 
-        public Action OnSwipeLeft { get; set; }
-        public Action OnSwipeRight { get; set; }
+        public Action? OnSwipeLeft { get; set; }
+        public Action? OnSwipeRight { get; set; }
 
         public SwipeGestureHandler(UIElement gestureSurface, FrameworkElement targetToAnimate, double swipeThreshold = 100)
         {
@@ -33,26 +33,26 @@ namespace InfoPointUI.Helpers
             gestureSurface.MouseUp += OnMouseUp;
         }
 
-        private void OnManipulationDelta(object sender, ManipulationDeltaEventArgs e)
+        private void OnManipulationDelta(object? sender, ManipulationDeltaEventArgs e)
         {
             _cumulativeTranslation += e.DeltaManipulation.Translation.X;
             _target.RenderTransform = new TranslateTransform(_cumulativeTranslation, 0);
         }
 
-        private void OnManipulationCompleted(object sender, ManipulationCompletedEventArgs e)
+        private void OnManipulationCompleted(object? sender, ManipulationCompletedEventArgs e)
         {
             HandleSwipe(_cumulativeTranslation);
             _cumulativeTranslation = 0;
         }
 
-        private void OnMouseDown(object sender, MouseButtonEventArgs e)
+        private void OnMouseDown(object? sender, MouseButtonEventArgs e)
         {
             _mouseStart = e.GetPosition(_gestureSurface);
             _isDragging = true;
             _gestureSurface.CaptureMouse();
         }
 
-        private void OnMouseMove(object sender, MouseEventArgs e)
+        private void OnMouseMove(object? sender, MouseEventArgs e)
         {
             if (_isDragging)
             {
@@ -62,7 +62,7 @@ namespace InfoPointUI.Helpers
             }
         }
 
-        private void OnMouseUp(object sender, MouseButtonEventArgs e)
+        private void OnMouseUp(object? sender, MouseButtonEventArgs e)
         {
             if (_isDragging)
             {

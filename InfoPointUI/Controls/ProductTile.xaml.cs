@@ -52,12 +52,12 @@ namespace InfoPointUI.Controls
             }
         }
 
-        private void OnTouchDown(object sender, TouchEventArgs e)
+        private void OnTouchDown(object? sender, TouchEventArgs e)
         {
             _touchStart = e.GetTouchPoint(this).Position;
         }
 
-        private async void OnTouchUp(object sender, TouchEventArgs e)
+        private async void OnTouchUp(object? sender, TouchEventArgs e)
         {
             var end = e.GetTouchPoint(this).Position;
             var deltaX = Math.Abs(end.X - _touchStart.X);

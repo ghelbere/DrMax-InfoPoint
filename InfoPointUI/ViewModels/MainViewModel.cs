@@ -183,7 +183,7 @@ public class MainViewModel : INotifyPropertyChanged
             }
 
         // 2️⃣ Dacă nu e resursă, încearcă să o încarce din URL
-        if (image == null && Uri.TryCreate(product.ImageUrl, UriKind.Absolute, out Uri uri) &&
+        if (image == null && Uri.TryCreate(product.ImageUrl, UriKind.Absolute, out Uri? uri) &&
             (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
         {
             try
