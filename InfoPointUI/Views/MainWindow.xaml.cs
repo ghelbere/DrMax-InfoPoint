@@ -15,7 +15,7 @@ namespace InfoPointUI.Views
         private MainViewModel? ViewModel => DataContext as MainViewModel;
         private SwipeGestureHandler? _swipeHandler;
 
-        private const int INACTIVITY_THRESHOLD_SECONDS = 600;
+        private const int INACTIVITY_THRESHOLD_SECONDS = 6;
 
         private DispatcherTimer _inactivityTimer = null!;
         private readonly TimeSpan _inactivityThreshold = TimeSpan.FromSeconds(INACTIVITY_THRESHOLD_SECONDS);
