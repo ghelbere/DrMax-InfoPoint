@@ -29,13 +29,32 @@ namespace InfoPointUI.Views.Standby
 
             this.MouseDown += StandbyWindow_OnMouseDown;
             this.TouchDown += StandbyWindow_OnTouchDown;
+            this.MouseMove += StandbyWindow_OnMouseMove;
 
             this.Closing += StandbyWindow_Closing;
             Loaded += Window_Loaded;
 
+            this.PreviewKeyDown += (s, e) =>
+            {
+                if (e.Key == Key.Escape)
+                {
+                    e.Handled = true; // oprește închiderea
+
+                    StandbyClicked?.Invoke(this, EventArgs.Empty);
+                    this.Hide();
+                }
+            };
+
         }
 
-
+        private void StandbyWindow_OnMouseMove(object sender, MouseEventArgs e)
+        {
+            if (e.LeftButton == MouseButtonState.Pressed)
+            {
+                StandbyClicked?.Invoke(this, EventArgs.Empty);
+                this.Hide();
+            }
+        }
 
         private void StandbyWindow_OnMouseDown(object? sender, MouseButtonEventArgs e)
         {

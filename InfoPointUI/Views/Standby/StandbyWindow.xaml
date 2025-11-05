@@ -32,7 +32,7 @@
                 </TextBlock.Effect>
             </TextBlock>
             <Canvas HorizontalAlignment="Center">
-                <TextBlock x:Name="MyText" Text="APROPIE-TE PENTRU A ÎNCEPE" 
+                <TextBlock x:Name="MyText" Text="APROPIE-TE SAU APASĂ PENTRU A ÎNCEPE" 
                            FontSize="24" HorizontalAlignment="Center" Foreground="White" TextAlignment="Center" 
                            Margin="0,10,0,0" FontFamily="Bahnschrift">
                     <TextBlock.Effect>

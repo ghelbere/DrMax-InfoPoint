@@ -98,6 +98,13 @@ namespace InfoPointUI.Views
             this.MouseDown += OnUserActivity;
             this.KeyDown += OnUserActivity;
             this.TouchDown += OnUserActivity;
+            this.PreviewKeyDown += (s, e) =>
+            {
+                if (e.Key == Key.Escape)
+                {
+                    e.Handled = true; // oprește închiderea
+                }
+            };
         }
 
 
@@ -105,8 +112,35 @@ namespace InfoPointUI.Views
         /// <summary>
         /// Configurează conexiunile logice dintre MainWindow, ProximitySensor și StandbyWindow.
         /// </summary>
+        Point? _lastMousePos = null;
         private void InitializeStandbySystem()
         {
+            InputManager.Current.PreProcessInput += (s, e) =>
+            {
+                if (e.StagingItem.Input is MouseEventArgs mm && mm.RoutedEvent == Mouse.MouseMoveEvent)
+                {
+                    var pos = mm.GetPosition(null);
+                    if (_lastMousePos.HasValue && _lastMousePos.Value == pos 
+                        && (Math.Abs(_lastMousePos.Value.X - pos.X)>20 || (Math.Abs(_lastMousePos.Value.Y - pos.Y) > 20)))
+                        return; // ignoră "mousemove" fără deplasare reală
+
+                    var bIsFirstMove = _lastMousePos == null;
+                    _lastMousePos = pos;
+                    if (bIsFirstMove)
+                        return;
+                }
+
+                if ((e.StagingItem.Input is KeyEventArgs ke && ke.RoutedEvent == Keyboard.KeyDownEvent)
+                || (e.StagingItem.Input is MouseEventArgs me && (me.RoutedEvent == Mouse.MouseDownEvent ))
+                || (e.StagingItem.Input is TouchEventArgs te && te.RoutedEvent == TouchDownEvent)
+                )
+                {
+                    _lastActivityTime = DateTime.Now;
+                    if (_isInStandby)
+                        ExitStandbyMode();
+                }
+            };
+
             _standbyWindow.StandbyClicked += (_, _) =>
             {
                 if (_isInStandby)
@@ -195,6 +229,7 @@ namespace InfoPointUI.Views
             _standbyWindow.Hide();
             this.Show();
             this.Activate();
+            SearchTextBox.Focus();
         }
 
     }

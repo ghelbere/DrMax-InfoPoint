@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Globalization;
 using System.Windows;
+using System.Windows.Input;
 
 namespace InfoPointUI
 {
@@ -21,6 +22,16 @@ namespace InfoPointUI
             mainWindow.Show();
 
             base.OnStartup(e);
+
+            EventManager.RegisterClassHandler(typeof(Window),
+                Window.PreviewKeyDownEvent,
+                new KeyEventHandler((s, ev) =>
+                {
+                    if (ev.Key == Key.Escape && s is MainWindow)
+                    {
+                        ev.Handled = true; // doar MainWindow ignoră ESC
+                    }
+                }));
         }
     }
 }

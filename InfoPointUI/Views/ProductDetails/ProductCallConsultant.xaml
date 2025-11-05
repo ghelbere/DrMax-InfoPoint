@@ -55,7 +55,9 @@
         <StackPanel Grid.Row="1"
             Grid.Column="0"
             Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" >
-            <TextBlock Text="Consultant solicitat!" Foreground="White" FontSize="32" />
+            <TextBlock Text="Consultant solicitat!" Foreground="White" FontSize="32" HorizontalAlignment="Center"/>
+            <TextBlock Height="24"/>
+            <TextBlock Text="Unul dintre colegii nostri vă va ajuta in cel mai scurt timp" Foreground="White" FontSize="28" />
         </StackPanel>
 
     </Grid>

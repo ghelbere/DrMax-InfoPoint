@@ -53,7 +53,7 @@ public class MainViewModel : INotifyPropertyChanged
     }
 
     // 🔢 Paginare
-    public int PageSize { get; set; } = 15;
+    public int PageSize { get; set; } = 28;
 
     private int _currentPage = 0;
     public int CurrentPage

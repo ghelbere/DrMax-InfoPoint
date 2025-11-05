@@ -45,13 +45,13 @@
 
         <!-- Rândul 1 -->
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
-            <Button Tag="CloseWindow" Content="Înapoi" Width="88" Height="38" Margin="0,0,12,0" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
-            <Button Tag="CloseWindow" Content="Home" Width="88" Height="38" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
+            <Button Tag="CloseWindow" Content="Înapoi" Width="88" Height="42" Margin="0,0,12,0" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
+            <Button Tag="CloseWindow" Content="Home" Width="88" Height="42" Background="White" Style="{StaticResource RoundedButtonLargeFont}" Visibility="Hidden"/>
         </StackPanel>
 
         <Image Grid.Row="0" Grid.Column="1" Source="/Assets/Images/drmax_logo.png" 
                RenderOptions.BitmapScalingMode="HighQuality"
-               Height="40" 
+               Height="42" 
                HorizontalAlignment="Center"/>
 
         <!-- Rândul 2 -->
