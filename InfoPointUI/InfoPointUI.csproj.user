@@ -7,6 +7,12 @@
     </ApplicationDefinition>
   </ItemGroup>
   <ItemGroup>
+    <Compile Update="Controls\DrMaxCard.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Controls\LoyalityCard.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Controls\ProductTile.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
@@ -20,6 +26,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\ProductDetails\ProductLocationPage.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Update="Views\ScanCard\CardScanWindow.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
     <Compile Update="Views\Standby\StandbyWindow.xaml.cs">

@@ -52,7 +52,9 @@
         <Image Grid.Row="0" Grid.Column="1" Source="/Assets/Images/drmax_logo.png" 
                RenderOptions.BitmapScalingMode="HighQuality"
                Height="42" 
-               HorizontalAlignment="Center"/>
+               HorizontalAlignment="Right"
+               VerticalAlignment="Center"
+               Margin="0,-10,30,0"/>
 
         <!-- Rândul 2 -->
         <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="DETALII PRODUS" FontSize="22" FontWeight="Bold"

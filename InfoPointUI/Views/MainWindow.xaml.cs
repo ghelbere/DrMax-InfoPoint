@@ -15,7 +15,7 @@ namespace InfoPointUI.Views
         private MainViewModel? ViewModel => DataContext as MainViewModel;
         private SwipeGestureHandler? _swipeHandler;
 
-        private const int INACTIVITY_THRESHOLD_SECONDS = 6;
+        private const int INACTIVITY_THRESHOLD_SECONDS = 60;
 
         private DispatcherTimer _inactivityTimer = null!;
         private readonly TimeSpan _inactivityThreshold = TimeSpan.FromSeconds(INACTIVITY_THRESHOLD_SECONDS);
@@ -29,6 +29,8 @@ namespace InfoPointUI.Views
         public MainWindow()
         {
             InitializeComponent();
+
+            txtCardNumber.DataContext = (App)Application.Current;
 
             this.KeyDown += (s, e) =>
             {
@@ -58,6 +60,7 @@ namespace InfoPointUI.Views
             {
                 viewModel.SelectedCategory = "";
             }
+
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -70,6 +73,7 @@ namespace InfoPointUI.Views
                 OnSwipeLeft = () => ViewModel?.NextPageCommand.Execute(null),
                 OnSwipeRight = () => ViewModel?.PreviousPageCommand.Execute(null)
             };
+
         }
 
         private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
@@ -203,13 +207,8 @@ namespace InfoPointUI.Views
 
             _isInStandby = true;
 
-            foreach (Window win in Application.Current.Windows)
-            {
-                if (win is ProductDetailsWindow)
-                {
-                    win.Close();
-                }
-            }
+            WindowManager.CloseIfOpen<ProductDetailsWindow>();
+            WindowManager.CloseIfOpen<CardScanWindow>();
 
             _standbyWindow.Show();
             this.Hide();
@@ -229,8 +228,20 @@ namespace InfoPointUI.Views
             _standbyWindow.Hide();
             this.Show();
             this.Activate();
+            SearchTextBox.Clear();
             SearchTextBox.Focus();
+
+            // Pregateste totul pentru urmatoarea persoana
+            ViewModel.SelectedCategory = "";
+            ViewModel.Products.Clear();
+            ((App)Application.Current).LoyaltyCardCode = String.Empty;
         }
 
+        private void OnScanCard(object sender, RoutedEventArgs e)
+        {
+            var cardWindow = new CardScanWindow();
+            cardWindow.ShowDialog();
+            SearchTextBox.Focus();
+        }
     }
 }

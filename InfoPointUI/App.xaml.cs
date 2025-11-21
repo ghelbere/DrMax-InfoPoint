@@ -1,13 +1,36 @@
 ﻿using InfoPointUI.Views;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Input;
 
 namespace InfoPointUI
 {
-    public partial class App : Application
+    public partial class App : Application, INotifyPropertyChanged
     {
+        private string? _loyaltyCardCode = String.Empty;
+
+        public string? LoyaltyCardCode
+        {
+            get => _loyaltyCardCode;
+            set
+            {
+                if (_loyaltyCardCode != value)
+                {
+                    _loyaltyCardCode = value;
+                    OnPropertyChanged();
+                }
+            }
+        }
+
+        public event PropertyChangedEventHandler? PropertyChanged;
+
+        protected void OnPropertyChanged([CallerMemberName] string? propertyName = null)
+        {
+            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+        }
         protected override void OnStartup(StartupEventArgs e)
         {
             Debug.WriteLine("OnStartup called");

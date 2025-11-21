@@ -16,6 +16,7 @@
         <converters:ImageUrlFallbackConverter x:Key="ImageUrlFallbackConverter"/>
         <converters:BottomBarTextConverter x:Key="BottomBarTextConverter"/>
         <converters:BoolToVisibilityConverter x:Key="BoolToVisibilityConverter"/>
+        <converters:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
 
         <!-- 🎨 Paletă Dr.Max -->
         <SolidColorBrush x:Key="DrMaxRed">#E30613</SolidColorBrush>
@@ -39,7 +40,7 @@
                             <!-- Fundal -->
                             <Border CornerRadius="12"
                             Background="#FFF5F6F7"
-                            BorderBrush="#11000000"
+                            BorderBrush="#88000000"
                             BorderThickness="1" />
 
                             <!-- Masca pentru umbră -->
@@ -139,34 +140,61 @@
         </Style>
 
         <!-- 🟩 Butoane categorie -->
-        <Style x:Key="CategoryButtonStyle" TargetType="Button">
-            <Setter Property="Width" Value="120"/>
-            <Setter Property="Height" Value="44"/>
-            <Setter Property="Margin" Value="0,0,10,0"/>
-            <Setter Property="FontSize" Value="16"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="FontFamily" Value="Segoe UI"/>
-            <Setter Property="BorderThickness" Value="2"/>
-            <Setter Property="BorderBrush" Value="{StaticResource PharmacyGreen}"/>
-            <Setter Property="Background" Value="White"/>
-            <Setter Property="Foreground" Value="{StaticResource PharmacyGreen}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}"
-                                BorderBrush="{TemplateBinding BorderBrush}"
-                                BorderThickness="{TemplateBinding BorderThickness}"
-                                CornerRadius="5">
-                            <ContentPresenter HorizontalAlignment="Center"
-                                              VerticalAlignment="Center"
-                                              Margin="{TemplateBinding Padding}"/>
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+            <Style x:Key="CategoryButtonStyle" TargetType="Button">
+                <Setter Property="Width" Value="135"/>
+                <Setter Property="Height" Value="44"/>
+                <Setter Property="Margin" Value="0,0,10,0"/>
+                <Setter Property="FontSize" Value="16"/>
+                <Setter Property="FontWeight" Value="SemiBold"/>
+                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="BorderThickness" Value="2"/>
+                <Setter Property="BorderBrush" Value="{StaticResource PharmacyGreen}"/>
+                <Setter Property="Background" Value="White"/>
+                <Setter Property="Foreground" Value="{StaticResource PharmacyGreen}"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border x:Name="border"
+                        Background="{TemplateBinding Background}"
+                        BorderBrush="{TemplateBinding BorderBrush}"
+                        BorderThickness="{TemplateBinding BorderThickness}"
+                        CornerRadius="5">
+                                <ContentPresenter HorizontalAlignment="Center"
+                                      VerticalAlignment="Center"
+                                      Margin="{TemplateBinding Padding}"
+                                      RecognizesAccessKey="True"
+                                      Content="{TemplateBinding Content}"
+                                      ContentTemplate="{TemplateBinding ContentTemplate}"
+                                      ContentStringFormat="{TemplateBinding ContentStringFormat}"
+                                      TextElement.Foreground="{TemplateBinding Foreground}"/>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <!-- Hover -->
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <!--<Setter TargetName="border" Property="Background" Value="{StaticResource PharmacyGreenSoft}"/>-->
+                                    <Setter TargetName="border" Property="Background" Value="{StaticResource DrMaxRed}"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
 
-        <!-- 🔴 Buton categorie selectată -->
+                                <!-- Mouse Down -->
+                                <Trigger Property="IsPressed" Value="True">
+                                    <Setter TargetName="border" Property="Background" Value="{StaticResource DrMaxRed}"/>
+                                    <Setter Property="Foreground" Value="White"/>
+                                </Trigger>
+
+                                <!-- Disabled -->
+                                <Trigger Property="IsEnabled" Value="False">
+                                    <Setter TargetName="border" Property="Background" Value="#FFE0E0E0"/>
+                                    <Setter TargetName="border" Property="BorderBrush" Value="#FFAAAAAA"/>
+                                    <Setter Property="Foreground" Value="#FF888888"/>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- 🔴 Buton categorie selectată -->
         <Style x:Key="CategoryButtonSelectedStyle"
                BasedOn="{StaticResource CategoryButtonStyle}" TargetType="Button">
             <Setter Property="Background" Value="{StaticResource DrMaxRed}"/>

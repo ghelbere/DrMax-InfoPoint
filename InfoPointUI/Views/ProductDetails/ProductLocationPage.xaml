@@ -38,11 +38,16 @@
 
         <!-- Rândul 1 -->
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
-            <Button  Command="{Binding NavigateToDetailsCommand}" Content="Înapoi" Width="88" Height="38" Margin="0,0,12,0" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
-            <Button Content="Home" Tag="CloseWindow" Width="88" Height="38" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
+            <Button  Command="{Binding NavigateToDetailsCommand}" Content="Înapoi" Width="88" Height="40" Margin="0,0,12,0" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
+            <Button Content="Home" Tag="CloseWindow" Width="88" Height="40" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
         </StackPanel>
 
-        <Image Grid.Row="0" Grid.Column="1" Source="/Assets/Images/drmax_logo.png" Height="40" HorizontalAlignment="Center"/>
+        <Image Grid.Row="0" Grid.Column="1" Source="/Assets/Images/drmax_logo.png" 
+               RenderOptions.BitmapScalingMode="HighQuality"
+               Height="42" 
+               HorizontalAlignment="Right"
+               VerticalAlignment="Center"
+               Margin="0,-10,30,0"/>
 
 
         <StackPanel Grid.Row="1"
