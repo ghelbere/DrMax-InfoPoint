@@ -1,9 +1,9 @@
 ﻿using InfoPointUI.Helpers;
 using InfoPointUI.Models;
 using InfoPointUI.Sensors;
+using InfoPointUI.Services;
 using InfoPointUI.ViewModels;
 using InfoPointUI.Views.ProductDetails;
-using InfoPointUI.Views.Standby;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
@@ -15,20 +15,19 @@ namespace InfoPointUI.Views
         private MainViewModel? ViewModel => DataContext as MainViewModel;
         private SwipeGestureHandler? _swipeHandler;
 
-        private const int INACTIVITY_THRESHOLD_SECONDS = 60;
-
-        private DispatcherTimer _inactivityTimer = null!;
-        private readonly TimeSpan _inactivityThreshold = TimeSpan.FromSeconds(INACTIVITY_THRESHOLD_SECONDS);
-        private DateTime _lastActivityTime;
-
-        private bool _isInStandby;
         private ProximitySensor _proximitySensor = null!;
-        private StandbyWindow _standbyWindow = null!;
+
+        private readonly IStandbyService? _standbyService;
 
 
-        public MainWindow()
+        public MainWindow(MainViewModel viewModell, IStandbyService standbyService)
         {
             InitializeComponent();
+
+            DataContext = viewModell;
+
+            // Register with standby service
+            standbyService.RegisterActiveWindow(this);
 
             txtCardNumber.DataContext = (App)Application.Current;
 
@@ -42,12 +41,6 @@ namespace InfoPointUI.Views
             };
 
             InitializeComponentsAndEvents();
-            InitializeStandbySystem();
-
-            _inactivityTimer.Start();
-            _lastActivityTime = DateTime.Now;
-
-            
 
             bool isPortrait = SystemParameters.PrimaryScreenHeight > SystemParameters.PrimaryScreenWidth;
             if (isPortrait)
@@ -61,6 +54,12 @@ namespace InfoPointUI.Views
                 viewModel.SelectedCategory = "";
             }
 
+        }
+
+        protected override void OnClosed(EventArgs e)
+        {
+            Loaded -= Window_Loaded;
+            base.OnClosed(e);
         }
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
@@ -89,19 +88,6 @@ namespace InfoPointUI.Views
         private void InitializeComponentsAndEvents()
         {
             _proximitySensor = new ProximitySensor();
-            _standbyWindow = new StandbyWindow();
-
-            _inactivityTimer = new DispatcherTimer
-            {
-                Interval = TimeSpan.FromSeconds(1)
-            };
-            _inactivityTimer.Tick += InactivityTimer_Tick;
-
-            // monitorizare activitate utilizator (mouse, tastatură, touch)
-            this.MouseMove += OnUserActivity;
-            this.MouseDown += OnUserActivity;
-            this.KeyDown += OnUserActivity;
-            this.TouchDown += OnUserActivity;
             this.PreviewKeyDown += (s, e) =>
             {
                 if (e.Key == Key.Escape)
@@ -109,132 +95,6 @@ namespace InfoPointUI.Views
                     e.Handled = true; // oprește închiderea
                 }
             };
-        }
-
-
-
-        /// <summary>
-        /// Configurează conexiunile logice dintre MainWindow, ProximitySensor și StandbyWindow.
-        /// </summary>
-        Point? _lastMousePos = null;
-        private void InitializeStandbySystem()
-        {
-            InputManager.Current.PreProcessInput += (s, e) =>
-            {
-                if (e.StagingItem.Input is MouseEventArgs mm && mm.RoutedEvent == Mouse.MouseMoveEvent)
-                {
-                    var pos = mm.GetPosition(null);
-                    if (_lastMousePos.HasValue && _lastMousePos.Value == pos 
-                        && (Math.Abs(_lastMousePos.Value.X - pos.X)>20 || (Math.Abs(_lastMousePos.Value.Y - pos.Y) > 20)))
-                        return; // ignoră "mousemove" fără deplasare reală
-
-                    var bIsFirstMove = _lastMousePos == null;
-                    _lastMousePos = pos;
-                    if (bIsFirstMove)
-                        return;
-                }
-
-                if ((e.StagingItem.Input is KeyEventArgs ke && ke.RoutedEvent == Keyboard.KeyDownEvent)
-                || (e.StagingItem.Input is MouseEventArgs me && (me.RoutedEvent == Mouse.MouseDownEvent ))
-                || (e.StagingItem.Input is TouchEventArgs te && te.RoutedEvent == TouchDownEvent)
-                )
-                {
-                    _lastActivityTime = DateTime.Now;
-                    if (_isInStandby)
-                        ExitStandbyMode();
-                }
-            };
-
-            _standbyWindow.StandbyClicked += (_, _) =>
-            {
-                if (_isInStandby)
-                    ExitStandbyMode();
-            };
-
-            // DE COMENTAT CAND AVEM SENZORI REALI (verificat cu timere in  clasa ProximitySensor)
-            _standbyWindow.SensorButtonClicked += (_, isDetected) =>
-            {
-                // DE COMENTAT CAND AVEM SENZORI REALI
-                _proximitySensor.SimulateDetection(isDetected); // acum apeleaza _proximitySensor.UserDetectionChanged
-            };
-
-            // !!! VA INLOCUI BUTONUL DE SIMULARE din StandbyWindow  (verificat cu timere in  clasa ProximitySensor)
-            _proximitySensor.UserDetectionChanged += (_, isDetected) =>
-            {
-                if (isDetected && _isInStandby)
-                    ExitStandbyMode();
-
-                // DE COMENTAT CAND AVEM SENZORI REALI
-                _proximitySensor.SimulateDetection(false);
-            };
-        }
-
-        /// <summary>
-        /// Verifică activitatea utilizatorului și actualizează timpul rămas până la intrarea în standby.
-        /// </summary>
-        private void InactivityTimer_Tick(object? sender, EventArgs e)
-        {
-            // Dacă fereastra e deja în standby, nu actualizăm nimic
-            if (_isInStandby)
-                return;
-
-            // Calculăm timpul scurs de la ultima activitate
-            var elapsed = DateTime.Now - _lastActivityTime;
-            int secondsLeft = Math.Max(0, (int)(_inactivityThreshold.TotalSeconds - elapsed.TotalSeconds));
-
-            // Actualizăm eticheta din interfață (dacă există)
-            //lblCountdown.Content = $"Secunde până la standby: {secondsLeft}";
-
-            // Intrăm în standby doar dacă timpul de inactivitate a depășit pragul
-            // și senzorul de proximitate nu a detectat utilizatorul
-            if (elapsed >= _inactivityThreshold && !_proximitySensor.IsUserDetected)
-            {
-                EnterStandbyMode();
-            }
-        }
-
-
-        private void OnUserActivity(object? sender, EventArgs e)
-        {
-            _lastActivityTime = DateTime.Now;
-            if (_isInStandby)
-                ExitStandbyMode();
-        }
-
-        private void EnterStandbyMode()
-        {
-            _inactivityTimer.Stop(); // inutil functional, util pentru performanta generala. Restarted in ExitStandbyMode
-
-            _isInStandby = true;
-
-            WindowManager.CloseIfOpen<ProductDetailsWindow>();
-            WindowManager.CloseIfOpen<CardScanWindow>();
-
-            _standbyWindow.Show();
-            this.Hide();
-        }
-
-        private void ExitStandbyMode()
-        {
-            if (_inactivityTimer.IsEnabled)
-            {
-                _inactivityTimer.Stop();
-            }
-            _inactivityTimer.Start();
-
-            _isInStandby = false;
-            _lastActivityTime = DateTime.Now;
-
-            _standbyWindow.Hide();
-            this.Show();
-            this.Activate();
-            SearchTextBox.Clear();
-            SearchTextBox.Focus();
-
-            // Pregateste totul pentru urmatoarea persoana
-            ViewModel.SelectedCategory = "";
-            ViewModel.Products.Clear();
-            ((App)Application.Current).LoyaltyCardCode = String.Empty;
         }
 
         private void OnScanCard(object sender, RoutedEventArgs e)

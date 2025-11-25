@@ -25,7 +25,10 @@
         <SolidColorBrush x:Key="PharmacyGreen">#28A745</SolidColorBrush>
         <SolidColorBrush x:Key="PharmacyGreenSoft">#F4FFF4</SolidColorBrush>
 
-        <!-- ✨ Umbre pentru tile-uri -->
+        <!-- Fonts -->
+        <FontFamily x:Key="BahnschriftFont">Bahnschrift</FontFamily>
+
+            <!-- ✨ Umbre pentru tile-uri -->
         <DropShadowEffect x:Key="TileShadow"
                           BlurRadius="6"
                           ShadowDepth="1"

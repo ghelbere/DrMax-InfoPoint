@@ -1,121 +1,73 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using InfoPointUI.Services;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Animation;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
-namespace InfoPointUI.Views.Standby
+namespace InfoPointUI.Views
 {
-    /// <summary>
-    /// Interaction logic for StandbyWindow.xaml
-    /// </summary>
     public partial class StandbyWindow : Window
     {
-        public event EventHandler? StandbyClicked;                // click/touch pe fereastră
-        public event EventHandler<bool>? SensorButtonClicked;     // buton simulare: payload = isDetected (true)
+        private readonly IStandbyService _standbyService;
 
-        public StandbyWindow()
+        public StandbyWindow(IStandbyService standbyService)
         {
+            _standbyService = standbyService;
             InitializeComponent();
 
-            this.MouseDown += StandbyWindow_OnMouseDown;
-            this.TouchDown += StandbyWindow_OnTouchDown;
-            this.MouseMove += StandbyWindow_OnMouseMove;
-
-            this.Closing += StandbyWindow_Closing;
-            Loaded += Window_Loaded;
-
-            this.PreviewKeyDown += (s, e) =>
-            {
-                if (e.Key == Key.Escape)
-                {
-                    e.Handled = true; // oprește închiderea
-
-                    StandbyClicked?.Invoke(this, EventArgs.Empty);
-                    this.Hide();
-                }
-            };
-
+            Loaded += OnStandbyWindowLoaded;
+            MouseDown += OnUserInteraction;
+            TouchDown += OnUserInteraction;
+            KeyDown += OnUserInteraction;
         }
 
-        private void StandbyWindow_OnMouseMove(object sender, MouseEventArgs e)
+        private void OnStandbyWindowLoaded(object sender, RoutedEventArgs e)
         {
-            if (e.LeftButton == MouseButtonState.Pressed)
+            // Start animations
+            StartLogoAnimation();
+            StartTextAnimation();
+        }
+
+        private void StartLogoAnimation()
+        {
+            var logoAnimation = (Storyboard)Resources["LogoBounceAnimation"];
+            if (logoAnimation != null && LogoBorder != null)
             {
-                StandbyClicked?.Invoke(this, EventArgs.Empty);
-                this.Hide();
+                Storyboard.SetTarget(logoAnimation, LogoBorder);
+                logoAnimation.Begin();
             }
         }
 
-        private void StandbyWindow_OnMouseDown(object? sender, MouseButtonEventArgs e)
+        private void StartTextAnimation()
         {
-            StandbyClicked?.Invoke(this, EventArgs.Empty);
-            this.Hide();
-        }
-
-        private void StandbyWindow_OnTouchDown(object? sender, TouchEventArgs e)
-        {
-            StandbyClicked?.Invoke(this, EventArgs.Empty);
-            this.Hide();
-        }
-
-        private void btnToggleSensor_Click(object sender, RoutedEventArgs e)
-        {
-            SensorButtonClicked?.Invoke(this, true);
-            this.Hide();
-        }
-
-        private void StandbyWindow_Closing(object? sender, System.ComponentModel.CancelEventArgs e)
-        {
-            e.Cancel = true; // prevenim închiderea completă
-            StandbyClicked?.Invoke(this, EventArgs.Empty);
-            this.Hide();
-        }
-
-        //animatie text standby
-        private void Window_Loaded(object sender, RoutedEventArgs e)
-        {
-
-            double canvasWidth = MyText.Parent is Canvas c ? c.ActualWidth : 0;
-            double textWidth = MyText.ActualWidth;
-
-            Canvas.SetLeft(MyText, (canvasWidth - textWidth) / 2); // center
-            Canvas.SetTop(MyText, 50); // poziția verticală
-
-            // Animație pentru mișcarea textului sus-jos
-            var animation = new DoubleAnimation
+            var textAnimation = (Storyboard)Resources["TextPulseAnimation"];
+            if (textAnimation != null && InstructionText != null)
             {
-                From = 0,
-                To = 100,
-                Duration = TimeSpan.FromSeconds(3),
-                AutoReverse = true,
-                RepeatBehavior = RepeatBehavior.Forever
-            };
-
-            Storyboard.SetTarget(animation, MyText);
-            Storyboard.SetTargetProperty(animation, new PropertyPath("(Canvas.Top)"));
-
-            var storyboard = new Storyboard();
-            storyboard.Children.Add(animation);
-            storyboard.Begin();
-
-            HiddenInput.Focus(); // forțează focusul pe TextBox-ul invizibil
+                Storyboard.SetTarget(textAnimation, InstructionText);
+                textAnimation.Begin();
+            }
         }
 
-        private void HiddenInput_KeyDown(object sender, KeyEventArgs e)
+        private void OnUserInteraction(object sender, RoutedEventArgs e)
         {
-            StandbyClicked?.Invoke(this, EventArgs.Empty);
-            this.Hide();
+            _standbyService.ForceActiveMode();
+            Close();
         }
 
+        protected override void OnClosed(EventArgs e)
+        {
+            // Stop animations
+            var logoAnimation = (Storyboard)Resources["LogoBounceAnimation"];
+            var textAnimation = (Storyboard)Resources["TextPulseAnimation"];
+
+            logoAnimation?.Stop(LogoBorder);
+            textAnimation?.Stop(InstructionText);
+
+            Loaded -= OnStandbyWindowLoaded;
+            MouseDown -= OnUserInteraction;
+            TouchDown -= OnUserInteraction;
+            KeyDown -= OnUserInteraction;
+
+            base.OnClosed(e);
+        }
     }
 }

@@ -92,8 +92,7 @@
                            VerticalAlignment="Center"
                            Visibility="{Binding Text, ElementName=txtCardNumber, Converter={StaticResource StringToVisibilityConverter}}"/>
                 <TextBlock x:Name="txtCardNumber" 
-                           Text="{Binding LoyaltyCardCode, UpdateSourceTrigger=PropertyChanged}" 
-                           DataContext="Application.Current"
+                           Text="{Binding LoyaltyCardCode, Source={x:Static Application.Current}}" 
                            FontSize="20" FontFamily="Bahnschrift"
                            HorizontalAlignment="Left" 
                            VerticalAlignment="Center"/>
