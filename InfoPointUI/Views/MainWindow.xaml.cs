@@ -65,7 +65,7 @@ namespace InfoPointUI.Views
 
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
-            SearchTextBox.Focus();
+            FocusSearchBox();
             Keyboard.Focus(SearchTextBox);
 
             _swipeHandler = new SwipeGestureHandler(MainGrid, ProductItemsControl)
@@ -121,8 +121,14 @@ namespace InfoPointUI.Views
             var searchBox = FindName("SearchTextBox") as TextBox;
             if (searchBox != null && searchBox.IsVisible && searchBox.IsEnabled)
             {
+                // oare e ok?
+                searchBox.Clear();
+                ViewModel?.Products.Clear();
+
+                // de aici e sigur bine :)
                 searchBox.Focus();
-                SearchTextBox.CaretIndex = SearchTextBox.Text.Length;
+                Keyboard.Focus(searchBox);
+                SearchTextBox.CaretIndex = SearchTextBox.Text.Length; // daca fac Clear(), Length va fi tot timpul zero
                 //searchBox.SelectAll(); // enervant pe tableta
             }
         }

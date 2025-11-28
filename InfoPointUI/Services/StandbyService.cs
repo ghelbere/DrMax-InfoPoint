@@ -14,8 +14,10 @@ namespace InfoPointUI.Services
         private HwndSource? _hwndSource;
         private bool _isUserActive;
         private bool _isTransitioning;
+        private readonly SmartHumanDetectionService _humanDetectionService;
+        private bool _humanDetectionEnabled = true;
 
-        public StandbyService(ILogger<StandbyService> logger)
+        public StandbyService(ILogger<StandbyService> logger, SmartHumanDetectionService humanDetectionService)
         {
             _logger = logger;
 
@@ -28,7 +30,23 @@ namespace InfoPointUI.Services
             _isUserActive = true;
             _isTransitioning = false;
 
+            _humanDetectionService = humanDetectionService;
+            _humanDetectionService.ConfirmedHumanPresenceChanged += OnHumanPresenceChanged;
+            _humanDetectionService.StartDetection();
+
             _logger.LogInformation("StandbyService created with timeout: {Timeout}", _standbyTimer.Interval);
+        }
+
+        private void OnHumanPresenceChanged(object? sender, bool humanPresent)
+        {
+            if (!_humanDetectionEnabled) return;
+
+            // Folosește IsInStandbyMode (property-ul tău existent) în loc de _isInStandbyMode
+            if (humanPresent && IsInStandbyMode)
+            {
+                _logger.LogInformation("Auto-exiting standby - human detected");
+                ForceActiveMode(); // Metoda ta existentă
+            }
         }
 
         public bool IsInStandbyMode { get; private set; }
@@ -215,6 +233,7 @@ namespace InfoPointUI.Services
             _standbyTimer.Stop();
             _standbyTimer.Tick -= OnStandbyTimerTick;
             _hwndSource?.RemoveHook(WndProc);
+            _humanDetectionService.StopDetection();
             ComponentDispatcher.ThreadPreprocessMessage -= OnThreadPreprocessMessage;
         }
     }

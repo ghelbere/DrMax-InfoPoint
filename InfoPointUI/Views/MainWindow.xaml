@@ -8,6 +8,7 @@
         WindowState="Maximized"
         WindowStyle="None"
         ResizeMode="NoResize"
+        FontFamily="{StaticResource BahnschriftFont}"
         Background="White"
         Loaded="Window_Loaded">
 
@@ -34,7 +35,7 @@
                 Content="X" 
                 Width="40" Height="40" 
                 HorizontalAlignment="Right" VerticalAlignment="Top"
-                Margin="10, 30" 
+                Margin="10, 55" 
                 Background="#FF4444" Foreground="White" 
                 FontWeight="Bold" FontSize="16"
                 Click="DebugCloseButton_Click"
@@ -44,7 +45,7 @@
         Content="TEST Standby" 
         Width="120" Height="40" 
         HorizontalAlignment="Right" VerticalAlignment="Top"
-        Margin="10,80,10,10" 
+        Margin="10,100,10,10" 
         Background="Blue" Foreground="White" 
         FontWeight="Bold" FontSize="12"
         Click="TestStandbyButton_Click"

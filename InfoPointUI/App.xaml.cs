@@ -109,6 +109,7 @@ namespace InfoPointUI
             services.AddSingleton<IStandbyService, StandbyService>();
             services.AddSingleton<IStandbyManager, StandbyManager>();
             services.AddSingleton<IApplicationManager, ApplicationManager>();
+            services.AddSingleton<SmartHumanDetectionService>();
 
             // Add your existing services here based on your current structure
             // services.AddSingleton<IProductsClient, ProductsClient>();
