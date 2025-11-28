@@ -7,18 +7,11 @@ namespace InfoPointUI.Views
 {
     public partial class CardScanWindow : Window
     {
-        private bool isClosing = false;
-
         public CardScanWindow(Window? owner = null)
         {
             InitializeComponent();
             if (owner != null)
                 Owner = owner;
-
-            this.Closing += (s, e) =>
-            {
-                isClosing = true;
-            };
 
             this.Activated += (s, e) =>
             {
@@ -79,12 +72,6 @@ namespace InfoPointUI.Views
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             txtCardCode.Focus();
-        }
-
-        private void txtCardCode_LostFocus(object sender, RoutedEventArgs e)
-        {
-            //if (!isClosing)
-            //    Close();
         }
 
         private void txtCardCode_PreviewTextInput(object sender, TextCompositionEventArgs e)

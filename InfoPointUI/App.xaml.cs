@@ -160,7 +160,7 @@ namespace InfoPointUI
         /// </summary>
         public void ClearLoyaltyCard()
         {
-            SetLoyaltyCard(null);
+            SetLoyaltyCard(String.Empty);
         }
 
         /// <summary>

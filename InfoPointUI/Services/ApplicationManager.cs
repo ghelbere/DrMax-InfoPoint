@@ -103,7 +103,7 @@ namespace InfoPointUI.Services
             });
         }
 
-        private void OnMainWindowClosing(object sender, System.ComponentModel.CancelEventArgs e)
+        private void OnMainWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
             if (_isShuttingDown)
             {
@@ -129,7 +129,7 @@ namespace InfoPointUI.Services
                 {
                     _logger.LogInformation(">>> ENTERING STANDBY FLOW <<<");
 
-                    _standbyService.StartTransition();
+                    _standbyService.ForceStandbyMode();
 
                     _logger.LogInformation("Hiding MainWindow...");
                     Application.Current.Dispatcher.Invoke(() =>
@@ -146,7 +146,7 @@ namespace InfoPointUI.Services
                 {
                     _logger.LogInformation(">>> EXITING STANDBY FLOW <<<");
 
-                    _standbyService.StartTransition();
+                    _standbyService.ForceActiveMode();
 
                     _logger.LogInformation("Hiding standby window...");
                     _standbyManager.HideStandbyWindow();

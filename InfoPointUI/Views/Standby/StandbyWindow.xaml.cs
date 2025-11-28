@@ -11,7 +11,7 @@ namespace InfoPointUI.Views
     public partial class StandbyWindow : Window
     {
         private readonly IStandbyService _standbyService;
-        private readonly ILogger<StandbyWindow> _logger;
+        private readonly Logger _logger;
         private bool _ignoreFirstInteraction;
 
         public StandbyWindow(IStandbyService standbyService)
@@ -36,14 +36,14 @@ namespace InfoPointUI.Views
             {
                 _ignoreFirstInteraction = false;
                 ignoreTimer.Stop();
-                _logger.LogInformation("StandbyWindow now accepting user interactions");
+                _logger?.Info("StandbyWindow now accepting user interactions");
             };
             ignoreTimer.Start();
         }
 
         private void OnStandbyWindowLoaded(object sender, RoutedEventArgs e)
         {
-            _logger.LogInformation("StandbyWindow loaded and visible");
+            _logger?.Info("StandbyWindow loaded and visible");
             StartLogoAnimation();
             StartTextAnimation();
         }
@@ -55,7 +55,7 @@ namespace InfoPointUI.Views
             {
                 Storyboard.SetTarget(logoAnimation, LogoBorder);
                 logoAnimation.Begin();
-                _logger.LogDebug("Logo bounce animation started");
+                _logger?.Debug("Logo bounce animation started");
             }
         }
 
@@ -66,19 +66,19 @@ namespace InfoPointUI.Views
             {
                 Storyboard.SetTarget(textAnimation, InstructionText);
                 textAnimation.Begin();
-                _logger.LogDebug("Text pulse animation started");
+                _logger?.Debug("Text pulse animation started");
             }
         }
 
-        private void OnUserInteraction(object sender, RoutedEventArgs e)
+        private void OnUserInteraction(object? sender, RoutedEventArgs e)
         {
             if (_ignoreFirstInteraction)
             {
-                _logger.LogDebug("Ignoring first interaction (likely mouse move from transition)");
+                _logger?.Debug("Ignoring first interaction (likely mouse move from transition)");
                 return;
             }
 
-            _logger.LogInformation("User interaction detected - exiting standby mode");
+            _logger?.Info("User interaction detected - exiting standby mode");
             _standbyService.ForceActiveMode();
             this.Hide();
         }
@@ -96,7 +96,7 @@ namespace InfoPointUI.Views
             TouchDown -= OnUserInteraction;
             KeyDown -= OnUserInteraction;
 
-            _logger.LogInformation("StandbyWindow closed");
+            _logger?.Info("StandbyWindow closed");
             base.OnClosed(e);
         }
     }

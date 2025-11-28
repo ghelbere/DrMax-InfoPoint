@@ -21,7 +21,7 @@ namespace InfoPointUI.Services
 
             _standbyTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(10)
+                Interval = TimeSpan.FromSeconds(120)
             };
             _standbyTimer.Tick += OnStandbyTimerTick;
 
@@ -99,7 +99,7 @@ namespace InfoPointUI.Services
 
         private void OnThreadPreprocessMessage(ref MSG msg, ref bool handled)
         {
-            if (msg.message >= 0x100 && msg.message <= 0x209)
+            if (msg.message >= 0x100 && msg.message < 0x200 && msg.message != 0x113)
             {
                 _logger.LogDebug("Input detected via ThreadPreprocessMessage: {Message}", msg.message);
                 OnUserActivity();

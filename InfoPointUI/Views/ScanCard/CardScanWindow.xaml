@@ -52,7 +52,6 @@
                                  VerticalContentAlignment="Center"
                                  HorizontalContentAlignment="Center"
                                  FontSize="16"
-                                 LostFocus="txtCardCode_LostFocus"
                                  PreviewTextInput="txtCardCode_PreviewTextInput"
                                  PreviewKeyDown="txtCardCode_PreviewKeyDown"/>
                         <!-- cerc roșu ca simbol -->
