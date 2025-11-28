@@ -64,7 +64,7 @@ namespace InfoPointUI.Services
 
             ComponentDispatcher.ThreadPreprocessMessage += OnThreadPreprocessMessage;
 
-            _registeredWindow.MouseMove += OnUserActivity;
+            //_registeredWindow.MouseMove += OnUserActivity;
             _registeredWindow.KeyDown += OnUserActivity;
             _registeredWindow.TouchDown += OnUserActivity;
             _registeredWindow.GotFocus += OnUserActivity;
@@ -92,7 +92,7 @@ namespace InfoPointUI.Services
         private bool IsInputMessage(int msg)
         {
             return (msg >= 0x100 && msg <= 0x109) ||
-                   (msg >= 0x200 && msg <= 0x20E) ||
+                   //(msg >= 0x200 && msg <= 0x20E) ||
                    (msg >= 0x240 && msg <= 0x241) ||
                    msg == 0x00FE || msg == 0x00FF;
         }
