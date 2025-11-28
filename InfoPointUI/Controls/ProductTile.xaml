@@ -34,14 +34,14 @@
                                Foreground="White"
                                FontWeight="Bold"
                                FontSize="18"
-                               FontFamily="Bahnschrift"/>
+                              FontFamily="{StaticResource BahnschriftFont}"/>
                 </Border>
             </Grid>
 
             <TextBlock Text="{Binding Name}"
                        FontSize="15"
                        FontWeight="Bold"
-                       FontFamily="Bahnschrift"
+                       FontFamily="{StaticResource BahnschriftFont}"
                        TextAlignment="Center"
                        TextWrapping="Wrap"
                        TextTrimming="CharacterEllipsis"
@@ -55,21 +55,21 @@
                         Margin="0,0,0,2">
                 <TextBlock Text="Preț: "
                            FontSize="16"
-                           FontFamily="Bahnschrift"
+                           FontFamily="{StaticResource BahnschriftFont}"
                            FontWeight="SemiBold"
                            Foreground="{StaticResource PharmacyGreen}"
                            Margin="0,0,4,0" />
 
                 <TextBlock Text="{Binding Price, Converter={StaticResource CurrencyConverter}}"
                            FontSize="16"
-                           FontFamily="Bahnschrift"
+                           FontFamily="{StaticResource BahnschriftFont}"
                            FontWeight="SemiBold"
                            Foreground="{StaticResource PharmacyGreen}"
                            Margin="0,0,4,0" />
 
                 <TextBlock Text="{Binding OriginalPrice, Converter={StaticResource CurrencyConverter}}"
                            FontSize="14"
-                           FontFamily="Bahnschrift"
+                           FontFamily="{StaticResource BahnschriftFont}"
                            Foreground="#888"
                            TextDecorations="Strikethrough"
                            Margin="0,1,0,0"
@@ -88,7 +88,7 @@
                        RenderOptions.BitmapScalingMode="HighQuality"/>
 
                 <TextBlock Text="{Binding Location}"
-                           FontFamily="Bahnschrift"
+                           FontFamily="{StaticResource BahnschriftFont}"
                            FontWeight="SemiBold"
                            FontSize="14"
                            Foreground="{StaticResource DrMaxText}"

@@ -5,11 +5,14 @@
         Title="Detalii Produs" Height="500" Width="700"
         Background="#FFF9F9F9" WindowStartupLocation="CenterScreen"
         ResizeMode="NoResize"
+        WindowStyle="None"
+        Topmost="True" ShowInTaskbar="False"
         Loaded="Window_Loaded">
 
-    <Frame x:Name="FrameHost" NavigationUIVisibility="Hidden"
+    <Border BorderThickness="2" CornerRadius="6" BorderBrush="{StaticResource PharmacyGreen}" Background="#FFF9F9F9">
+        <Frame x:Name="FrameHost" NavigationUIVisibility="Hidden"
            Navigating="MainFrame_Navigating"
            Navigated="MainFrame_Navigated"/>
-
+    </Border>
 </Window>
 

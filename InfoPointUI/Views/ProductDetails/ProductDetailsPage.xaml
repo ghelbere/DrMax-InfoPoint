@@ -12,6 +12,7 @@
         <!-- Stil pentru butoane rotunjite cu font mai mare -->
         <Style TargetType="Button" x:Key="RoundedButtonLargeFont">
             <Setter Property="FontSize" Value="18"/>
+            <Setter Property="FontFamily" Value="{StaticResource BahnschriftFont}"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
@@ -32,7 +33,7 @@
         <!-- Rânduri -->
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="40"/>
             <RowDefinition Height="*"/>
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
@@ -45,7 +46,7 @@
 
         <!-- Rândul 1 -->
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
-            <Button Tag="CloseWindow" Content="Înapoi" Width="88" Height="42" Margin="0,0,12,0" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
+            <Button Tag="CloseWindow" Content="Înapoi" Width="88" Height="42" Margin="0,0,12,0" Background="White" Style="{StaticResource RoundedButtonLargeFont}" VerticalContentAlignment="Center"/>
             <Button Tag="CloseWindow" Content="Home" Width="88" Height="42" Background="White" Style="{StaticResource RoundedButtonLargeFont}" Visibility="Hidden"/>
         </StackPanel>
 
@@ -57,27 +58,27 @@
                Margin="0,-10,30,0"/>
 
         <!-- Rândul 2 -->
-        <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="DETALII PRODUS" FontSize="22" FontWeight="Bold"
+        <TextBlock Grid.Row="0" Grid.ColumnSpan="2" Text="DETALII PRODUS" FontSize="24" FontWeight="Bold" FontFamily="{StaticResource BahnschriftFont}"
                 Foreground="DarkGray" HorizontalAlignment="Center" Margin="0,10,0,10"/>
 
         <!-- Rândul 3 -->
         <Image Grid.Row="2" Grid.Column="0" Source="{Binding Product.ProductImage}" 
                RenderOptions.BitmapScalingMode="HighQuality"
-               Height="150" 
+               Height="250" 
                HorizontalAlignment="Center" 
                VerticalAlignment="Top"/>
 
         <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Margin="20,0,0,0">
-            <TextBlock Text="{Binding Product.Name}" FontSize="20" FontWeight="Bold" Foreground="#333" TextWrapping="Wrap"/>
-            <TextBlock Text="{Binding Product.Description}"
-                    FontSize="16" Foreground="#666" Margin="0,10,0,0" TextWrapping="Wrap"/>
-            <TextBlock Text="{Binding Product.Price, StringFormat={}{0:N2} RON}" FontSize="22" FontWeight="Bold" Foreground="#333" Margin="0,20,0,0"/>
+            <TextBlock Text="{Binding Product.Name}" FontSize="22" FontWeight="Bold" Foreground="#333" TextWrapping="Wrap" FontFamily="{StaticResource BahnschriftFont}"/>
+            <TextBlock Text="{Binding Product.Description}" FontFamily="{StaticResource BahnschriftFont}"
+                    FontSize="18" Foreground="#666" Margin="0,10,0,0" TextWrapping="Wrap"/>
+            <TextBlock Text="{Binding Product.Price, StringFormat={}{0:N2} RON}" FontSize="22" FontFamily="{StaticResource BahnschriftFont}" FontWeight="Bold" Foreground="#333" Margin="0,20,0,0"/>
         </StackPanel>
 
         <!-- Rândul 4 -->
-        <Button Grid.Row="3" Grid.Column="0" Content="Localizează" Background="#2E7D32" Foreground="White"
+        <Button Grid.Row="3" Grid.Column="0" Content="Localizează" Background="#2E7D32" Foreground="White" FontFamily="{StaticResource BahnschriftFont}"
              Command="{Binding LocalizeazaCommand}" Width="187" Name="ToMapButton" Height="55" HorizontalAlignment="Right" Margin="0,15,10,0" Style="{StaticResource RoundedButtonLargeFont}"/>
-        <Button Grid.Row="3" Grid.Column="1" Content="Cheamă consultant" Background="White" Foreground="Black"
+        <Button Grid.Row="3" Grid.Column="1" Content="Cheamă consultant" Background="White" Foreground="Black" FontFamily="{StaticResource BahnschriftFont}"
              Command="{Binding CallConsultantCommand}" Width="187" Height="55" HorizontalAlignment="Left" Margin="10,15,0,0" Style="{StaticResource RoundedButtonLargeFont}"/>
     </Grid>
 

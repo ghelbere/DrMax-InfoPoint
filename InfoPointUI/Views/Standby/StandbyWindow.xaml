@@ -14,8 +14,10 @@
         </Storyboard>
 
         <Storyboard x:Key="TextPulseAnimation" RepeatBehavior="Forever" AutoReverse="True">
-            <DoubleAnimation Storyboard.TargetProperty="Opacity"
-                           From="0.7" To="1.0" Duration="0:0:2"/>
+            <DoubleAnimation 
+                Storyboard.TargetName="InstructionText"
+                Storyboard.TargetProperty="Opacity"
+                           From="0.4" To="1.0" Duration="0:0:2"/>
         </Storyboard>
     </Window.Resources>
 
@@ -35,14 +37,23 @@
 
             <TextBlock Text="Bine ați venit!" 
                        Foreground="White" FontSize="42" FontWeight="SemiBold"
-                       FontFamily="Bahnschrift" HorizontalAlignment="Center" 
+                       FontFamily="{StaticResource BahnschriftFont}" HorizontalAlignment="Center" 
                        Margin="0,0,0,25" TextAlignment="Center"/>
 
             <TextBlock x:Name="InstructionText"
-                       Text="Atingeți ecranul pentru a începe" 
-                       Foreground="White" FontSize="24" FontWeight="Light"
-                       FontFamily="Bahnschrift" HorizontalAlignment="Center" 
-                       Opacity="0.7" TextAlignment="Center"/>
+           Text="Apropiați-vă sau atingeți ecranul pentru a continua"
+           HorizontalAlignment="Center"
+           VerticalAlignment="Bottom"
+           Margin="20" FontSize="20"
+           FontFamily="{StaticResource BahnschriftFont}"
+           Foreground="White"
+           RenderTransformOrigin="0.5,0.5">
+                <TextBlock.RenderTransform>
+                    <ScaleTransform ScaleX="1" ScaleY="1"/>
+                </TextBlock.RenderTransform>
+            </TextBlock>
+            
+            
         </StackPanel>
 
         <Border Background="Transparent" Cursor="Hand"/>

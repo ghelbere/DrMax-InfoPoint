@@ -64,7 +64,7 @@ namespace InfoPointUI.Views
             var textAnimation = (Storyboard)Resources["TextPulseAnimation"];
             if (textAnimation != null && InstructionText != null)
             {
-                Storyboard.SetTarget(textAnimation, InstructionText);
+                //Storyboard.SetTarget(textAnimation, InstructionText);
                 textAnimation.Begin();
                 _logger?.Debug("Text pulse animation started");
             }

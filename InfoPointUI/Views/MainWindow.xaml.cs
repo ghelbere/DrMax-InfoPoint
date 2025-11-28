@@ -122,7 +122,8 @@ namespace InfoPointUI.Views
             if (searchBox != null && searchBox.IsVisible && searchBox.IsEnabled)
             {
                 searchBox.Focus();
-                searchBox.SelectAll();
+                SearchTextBox.CaretIndex = SearchTextBox.Text.Length;
+                //searchBox.SelectAll(); // enervant pe tableta
             }
         }
 
