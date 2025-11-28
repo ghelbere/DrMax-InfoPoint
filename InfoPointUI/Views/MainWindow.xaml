@@ -4,7 +4,7 @@
         xmlns:viewModels="clr-namespace:InfoPointUI.ViewModels"
         xmlns:controls="clr-namespace:InfoPointUI.Controls"
         xmlns:converters="clr-namespace:InfoPointUI.Converters"
-        Title="Pharmacy Tablet UI"
+        Title="DrMax Tablet UI"
         WindowState="Maximized"
         WindowStyle="None"
         ResizeMode="NoResize"
@@ -13,6 +13,7 @@
 
     <Window.Resources>
         <converters:CategoryStyleSelector x:Key="CategoryStyleSelector" />
+        <converters:BoolToVisibilityConverter x:Key="BooleanToVisibilityConverter"/>
     </Window.Resources>
 
     <Window.DataContext>
@@ -28,6 +29,27 @@
             <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
+
+        <Button x:Name="DebugCloseButton"
+                Content="X" 
+                Width="40" Height="40" 
+                HorizontalAlignment="Right" VerticalAlignment="Top"
+                Margin="10, 30" 
+                Background="#FF4444" Foreground="White" 
+                FontWeight="Bold" FontSize="16"
+                Click="DebugCloseButton_Click"
+                Visibility="{Binding IsDebugMode, Source={x:Static Application.Current}, Converter={StaticResource BoolToVisibilityConverter}}"
+                ToolTip="Close application (Debug mode only)"/>
+        <Button x:Name="TestStandbyButton"
+        Content="TEST Standby" 
+        Width="120" Height="40" 
+        HorizontalAlignment="Right" VerticalAlignment="Top"
+        Margin="10,80,10,10" 
+        Background="Blue" Foreground="White" 
+        FontWeight="Bold" FontSize="12"
+        Click="TestStandbyButton_Click"
+        Visibility="{Binding IsDebugMode, Source={x:Static Application.Current}, Converter={StaticResource BoolToVisibilityConverter}}"
+        ToolTip="Test standby functionality"/>
 
         <!-- 🔝 Header -->
         <Grid Grid.Row="0" Margin="0,0,0,20">

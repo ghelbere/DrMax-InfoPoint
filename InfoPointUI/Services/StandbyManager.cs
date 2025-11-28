@@ -1,6 +1,7 @@
 ﻿using InfoPointUI.Views;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Windows;
 
 namespace InfoPointUI.Services
 {
@@ -26,22 +27,24 @@ namespace InfoPointUI.Services
 
         public void ShowStandbyWindow()
         {
-            if (_currentStandbyWindow != null)
-            {
-                _logger.LogDebug("Standby window already shown");
-                return;
-            }
-
             try
             {
                 System.Windows.Application.Current.Dispatcher.Invoke(() =>
                 {
+                    if (_currentStandbyWindow != null)
+                    {
+                        _currentStandbyWindow.Show();
+                        _currentStandbyWindow.WindowState = WindowState.Maximized;
+                        _currentStandbyWindow.Activate();
+                        _logger.LogDebug("Standby window shown (existing instance)");
+                        return;
+                    }
+
                     _currentStandbyWindow = new StandbyWindow(_standbyService);
-                    _currentStandbyWindow.Closed += OnStandbyWindowClosed;
                     _currentStandbyWindow.Show();
 
                     _isStandbyMode = true;
-                    _logger.LogInformation("Standby window shown");
+                    _logger.LogInformation("Standby window created and shown");
                 });
             }
             catch (Exception ex)
@@ -54,11 +57,9 @@ namespace InfoPointUI.Services
         {
             System.Windows.Application.Current.Dispatcher.Invoke(() =>
             {
-                if (_currentStandbyWindow != null)
+                if (_currentStandbyWindow != null && _currentStandbyWindow.IsVisible)
                 {
-                    _currentStandbyWindow.Closed -= OnStandbyWindowClosed;
-                    _currentStandbyWindow.Close();
-                    _currentStandbyWindow = null;
+                    _currentStandbyWindow.Hide();
                     _isStandbyMode = false;
                     _logger.LogInformation("Standby window hidden");
                 }
@@ -84,25 +85,14 @@ namespace InfoPointUI.Services
             }
         }
 
-        private void OnStandbyWindowClosed(object? sender, EventArgs e)
-        {
-            _logger.LogDebug("Standby window closed event received");
-            _currentStandbyWindow = null;
-            _isStandbyMode = false;
-
-            // Când fereastra de standby se închide (prin interacțiune utilizator),
-            // forțăm modul activ pentru a preveni reapariția imediată
-            if (_standbyService.IsInStandbyMode)
-            {
-                _logger.LogInformation("Standby window closed by user - forcing active mode");
-                _standbyService.ForceActiveMode();
-            }
-        }
-
         public void Dispose()
         {
             _standbyService.PropertyChanged -= OnStandbyServicePropertyChanged;
-            HideStandbyWindow();
+            System.Windows.Application.Current.Dispatcher.Invoke(() =>
+            {
+                _currentStandbyWindow?.Close();
+                _currentStandbyWindow = null;
+            });
         }
     }
 }
