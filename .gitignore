@@ -7,3 +7,5 @@
 /InfoPointServer/obj
 /InfoPointUI/bin/Debug/net8.0-windows
 /InfoPointUI/obj
+/InfoPointServer/bin/Release/net8.0
+/InfoPointUI/bin/Release/net8.0-windows
