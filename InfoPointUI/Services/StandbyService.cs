@@ -1,9 +1,8 @@
-﻿using Microsoft.Extensions.Logging;
-using System.ComponentModel;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using Microsoft.Extensions.Logging;
 
 namespace InfoPointUI.Services
 {
@@ -14,6 +13,7 @@ namespace InfoPointUI.Services
         private Window? _registeredWindow;
         private HwndSource? _hwndSource;
         private bool _isUserActive;
+        private bool _isTransitioning;
 
         public StandbyService(ILogger<StandbyService> logger)
         {
@@ -21,11 +21,14 @@ namespace InfoPointUI.Services
 
             _standbyTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(20) // Default 2 minute
+                Interval = TimeSpan.FromSeconds(10)
             };
             _standbyTimer.Tick += OnStandbyTimerTick;
 
             _isUserActive = true;
+            _isTransitioning = false;
+
+            _logger.LogInformation("StandbyService created with timeout: {Timeout}", _standbyTimer.Interval);
         }
 
         public bool IsInStandbyMode { get; private set; }
@@ -36,13 +39,33 @@ namespace InfoPointUI.Services
             set
             {
                 _standbyTimer.Interval = value;
+                _logger.LogInformation("Standby timeout changed to: {Timeout}", value);
                 OnPropertyChanged(nameof(StandbyTimeout));
             }
+        }
+
+        public void StartTransition()
+        {
+            _logger.LogInformation("Starting transition - disabling input detection temporarily");
+            _isTransitioning = true;
+
+            DispatcherTimer transitionTimer = new DispatcherTimer
+            {
+                Interval = TimeSpan.FromSeconds(1)
+            };
+            transitionTimer.Tick += (s, e) =>
+            {
+                _isTransitioning = false;
+                transitionTimer.Stop();
+                _logger.LogInformation("Transition completed - input detection enabled");
+            };
+            transitionTimer.Start();
         }
 
         public void RegisterActiveWindow(Window window)
         {
             _registeredWindow = window;
+            _logger.LogInformation("StandbyService registered window: {Window}", window.GetType().Name);
 
             if (window.IsLoaded)
             {
@@ -58,6 +81,8 @@ namespace InfoPointUI.Services
         {
             if (_registeredWindow == null) return;
 
+            _logger.LogInformation("Hooking window events for standby detection");
+
             var helper = new WindowInteropHelper(_registeredWindow);
             _hwndSource = HwndSource.FromHwnd(helper.Handle);
             _hwndSource?.AddHook(WndProc);
@@ -69,13 +94,14 @@ namespace InfoPointUI.Services
             _registeredWindow.TouchDown += OnUserActivity;
             _registeredWindow.GotFocus += OnUserActivity;
 
-            _logger.LogInformation("Standby service hooked to window events");
+            _logger.LogInformation("Standby service successfully hooked to window events");
         }
 
         private void OnThreadPreprocessMessage(ref MSG msg, ref bool handled)
         {
             if (msg.message >= 0x100 && msg.message <= 0x209)
             {
+                _logger.LogDebug("Input detected via ThreadPreprocessMessage: {Message}", msg.message);
                 OnUserActivity();
             }
         }
@@ -84,6 +110,7 @@ namespace InfoPointUI.Services
         {
             if (IsInputMessage(msg))
             {
+                _logger.LogDebug("Input detected via WndProc: {Message}", msg);
                 OnUserActivity();
             }
             return IntPtr.Zero;
@@ -97,16 +124,26 @@ namespace InfoPointUI.Services
                    msg == 0x00FE || msg == 0x00FF;
         }
 
-        private void OnUserActivity(object? sender = null, EventArgs? e = null)
+        private void OnUserActivity(object? sender, EventArgs? e)
         {
+            _logger.LogDebug("User activity detected via event: {Sender}", sender?.GetType().Name);
             OnUserActivity();
         }
 
         private void OnUserActivity()
         {
+            if (_isTransitioning)
+            {
+                _logger.LogDebug("Input detected during transition - ignoring");
+                return;
+            }
+
+            _logger.LogDebug("User activity processed. Previous state: {IsUserActive}", _isUserActive);
+
             if (!_isUserActive)
             {
                 _isUserActive = true;
+                _logger.LogInformation("User became active after being inactive");
                 ForceActiveMode();
             }
 
@@ -115,47 +152,66 @@ namespace InfoPointUI.Services
 
         public void ResetStandbyTimer()
         {
+            _logger.LogDebug("Resetting standby timer");
             _standbyTimer.Stop();
             _standbyTimer.Start();
         }
 
         public void ForceStandbyMode()
         {
-            if (IsInStandbyMode) return;
+            if (IsInStandbyMode)
+            {
+                _logger.LogDebug("Already in standby mode");
+                return;
+            }
+
+            _logger.LogInformation("=== FORCING STANDBY MODE ===");
+
+            StartTransition();
 
             IsInStandbyMode = true;
             _isUserActive = false;
             _standbyTimer.Stop();
 
-            _logger.LogInformation("Entering standby mode");
+            _logger.LogInformation("Now in standby mode. Timer stopped.");
             OnPropertyChanged(nameof(IsInStandbyMode));
         }
 
         public void ForceActiveMode()
         {
-            if (!IsInStandbyMode) return;
+            if (!IsInStandbyMode)
+            {
+                _logger.LogDebug("Already in active mode");
+                return;
+            }
+
+            _logger.LogInformation("=== FORCING ACTIVE MODE ===");
+
+            StartTransition();
 
             IsInStandbyMode = false;
             _standbyTimer.Start();
 
-            _logger.LogInformation("Exiting standby mode");
+            _logger.LogInformation("Now in active mode. Timer started with interval: {Interval}", _standbyTimer.Interval);
             OnPropertyChanged(nameof(IsInStandbyMode));
         }
 
         private void OnStandbyTimerTick(object? sender, EventArgs e)
         {
-            _logger.LogInformation("Standby timeout reached");
+            _logger.LogInformation("=== STANDBY TIMER TICK - Entering standby ===");
             ForceStandbyMode();
         }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event System.ComponentModel.PropertyChangedEventHandler? PropertyChanged;
         protected virtual void OnPropertyChanged(string propertyName)
         {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+            _logger.LogDebug("Property changed: {PropertyName}", propertyName);
+            PropertyChanged?.Invoke(this, new System.ComponentModel.PropertyChangedEventArgs(propertyName));
         }
 
         public void Dispose()
         {
+            _logger.LogInformation("Disposing StandbyService");
             _standbyTimer.Stop();
             _standbyTimer.Tick -= OnStandbyTimerTick;
             _hwndSource?.RemoveHook(WndProc);

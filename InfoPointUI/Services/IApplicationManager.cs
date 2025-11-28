@@ -6,5 +6,6 @@
         void ShowMainWindow();
         void ShowStandbyWindow();
         void ShutdownApplication();
+        void ForceShutdown();
     }
 }

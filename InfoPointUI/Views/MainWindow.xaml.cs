@@ -103,5 +103,16 @@ namespace InfoPointUI.Views
             cardWindow.ShowDialog();
             SearchTextBox.Focus();
         }
+
+        private void DebugCloseButton_Click(object sender, RoutedEventArgs e)
+        {
+            Application.Current.Shutdown();
+        }
+
+        private void TestStandbyButton_Click(object sender, RoutedEventArgs e)
+        {
+            var standbyService = App.Current.GetService<IStandbyService>();
+            standbyService.ForceStandbyMode();
+        }
     }
 }
