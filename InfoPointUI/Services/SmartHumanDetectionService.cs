@@ -6,14 +6,14 @@ namespace InfoPointUI.Services
 {
     public class SmartHumanDetectionService
     {
-        private readonly ILogger<SmartHumanDetectionService> _logger;
+        private readonly ILogger<SmartHumanDetectionService>? _logger;
         private VideoCapture _camera;
         private bool _isRunning;
         private Thread _detectionThread;
 
         private const double MIN_FACE_AREA_RATIO = 0.03;
         private const double MIN_BODY_AREA_RATIO = 0.15;
-        private const int REQUIRED_CONSECUTIVE_FRAMES = 25;
+        private const int REQUIRED_CONSECUTIVE_FRAMES = 15;
         private const int ABSENCE_CONFIRMATION_FRAMES = 40;
 
         private int _consecutivePresenceFrames = 0;
@@ -22,7 +22,7 @@ namespace InfoPointUI.Services
 
         public event EventHandler<bool> ConfirmedHumanPresenceChanged;
 
-        public SmartHumanDetectionService(ILogger<SmartHumanDetectionService> logger)
+        public SmartHumanDetectionService(ILogger<SmartHumanDetectionService>? logger)
         {
             _logger = logger;
         }
@@ -54,7 +54,7 @@ namespace InfoPointUI.Services
             }
             catch (Exception ex)
             {
-                _logger.LogError(ex, "Failed to start human detection");
+                _logger?.LogError(ex, "Failed to start human detection");
             }
         }
 
@@ -124,11 +124,13 @@ namespace InfoPointUI.Services
         {
             try
             {
-                var paths = new[] { cascadeName, $"cascade/{cascadeName}", $"Assets/{cascadeName}" };
+                var paths = new[] { cascadeName, $"cascade\\{cascadeName}", $"Assets\\{cascadeName}" };
+                string appDirectory = AppDomain.CurrentDomain.BaseDirectory;
                 foreach (var path in paths)
                 {
-                    if (System.IO.File.Exists(path))
-                        return new CascadeClassifier(path);
+                    var relativePath = System.IO.Path.Combine(appDirectory, path);
+                    if (System.IO.File.Exists(relativePath))
+                        return new CascadeClassifier(relativePath);
                 }
                 return null;
             }

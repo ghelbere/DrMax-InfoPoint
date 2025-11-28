@@ -32,7 +32,7 @@ namespace InfoPointUI.Services
 
             _humanDetectionService = humanDetectionService;
             _humanDetectionService.ConfirmedHumanPresenceChanged += OnHumanPresenceChanged;
-            _humanDetectionService.StartDetection();
+            StartHumanDetection();
 
             _logger.LogInformation("StandbyService created with timeout: {Timeout}", _standbyTimer.Interval);
         }
@@ -235,6 +235,11 @@ namespace InfoPointUI.Services
             _hwndSource?.RemoveHook(WndProc);
             _humanDetectionService.StopDetection();
             ComponentDispatcher.ThreadPreprocessMessage -= OnThreadPreprocessMessage;
+        }
+
+        internal void StartHumanDetection()
+        {
+            _humanDetectionService.StartDetection();
         }
     }
 }

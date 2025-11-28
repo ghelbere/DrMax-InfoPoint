@@ -76,6 +76,9 @@ namespace InfoPointUI
                 _applicationManager = _serviceProvider.GetRequiredService<IApplicationManager>();
                 _applicationManager.StartApplication();
 
+                var standbyService = _serviceProvider.GetRequiredService<IStandbyService>() as StandbyService;
+                standbyService?.StartHumanDetection();
+
                 logger.Info("Application started successfully");
             }
             catch (Exception ex)

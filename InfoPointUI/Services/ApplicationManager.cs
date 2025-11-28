@@ -36,6 +36,7 @@ namespace InfoPointUI.Services
             _logger.LogInformation("=== STARTING APPLICATION ===");
             ConfigureMainWindow();
 
+
             _logger.LogInformation("Calling ForceStandbyMode to start in standby");
             _standbyService.ForceStandbyMode();
 
