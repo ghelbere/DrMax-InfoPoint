@@ -1,4 +1,8 @@
-﻿using System.Collections.ObjectModel;
+﻿using InfoPointUI.Commands;
+using InfoPointUI.Models;
+using InfoPointUI.Services;
+using InfoPointUI.Views;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.IO;
 using System.Net.Http;
@@ -8,9 +12,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using InfoPointUI.Commands;
-using InfoPointUI.Models;
-using InfoPointUI.Services;
+using System.Windows.Threading;
 
 namespace InfoPointUI.ViewModels;
 
@@ -118,6 +120,13 @@ public class MainViewModel : INotifyPropertyChanged
         SelectCategoryCommand = new RelayCommand<string>(category =>
         {
             SelectedCategory = category;
+
+            // Focus searchbox
+            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            {
+                var mainWindow = Application.Current.MainWindow as MainWindow;
+                mainWindow?.FocusSearchBox();
+            }), DispatcherPriority.ContextIdle);
         });
 
         NextPageCommand = new RelayCommand<object>(_ =>

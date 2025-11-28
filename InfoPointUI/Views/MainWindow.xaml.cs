@@ -5,6 +5,7 @@ using InfoPointUI.Services;
 using InfoPointUI.ViewModels;
 using InfoPointUI.Views.ProductDetails;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Threading;
 
@@ -101,7 +102,7 @@ namespace InfoPointUI.Views
         {
             var cardWindow = new CardScanWindow();
             cardWindow.ShowDialog();
-            SearchTextBox.Focus();
+            FocusSearchBox();
         }
 
         private void DebugCloseButton_Click(object sender, RoutedEventArgs e)
@@ -113,6 +114,27 @@ namespace InfoPointUI.Views
         {
             var standbyService = App.Current.GetService<IStandbyService>();
             standbyService.ForceStandbyMode();
+        }
+
+        internal void FocusSearchBox()
+        {
+            var searchBox = FindName("SearchTextBox") as TextBox;
+            if (searchBox != null && searchBox.IsVisible && searchBox.IsEnabled)
+            {
+                searchBox.Focus();
+                searchBox.SelectAll();
+            }
+        }
+
+        protected override void OnActivated(EventArgs e)
+        {
+            base.OnActivated(e);
+
+            // Delay mic pentru a se asigura că fereastra e complet activă
+            Dispatcher.BeginInvoke(new Action(() =>
+            {
+                FocusSearchBox();
+            }), DispatcherPriority.ContextIdle);
         }
     }
 }
