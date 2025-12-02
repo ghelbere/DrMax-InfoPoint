@@ -123,7 +123,7 @@ namespace InfoPointUI.Views
             {
                 // oare e ok?
                 searchBox.Clear();
-                ViewModel?.Products.Clear();
+                //ViewModel?.Products.Clear();
 
                 // de aici e sigur bine :)
                 searchBox.Focus();

@@ -16,6 +16,7 @@ namespace InfoPointUI.Services
         private bool _isTransitioning;
         private readonly SmartHumanDetectionService _humanDetectionService;
         private bool _humanDetectionEnabled = true;
+        private const int STANDBY_SECONDS = 120; // 120 secunde
 
         public StandbyService(ILogger<StandbyService> logger, SmartHumanDetectionService humanDetectionService)
         {
@@ -23,7 +24,7 @@ namespace InfoPointUI.Services
 
             _standbyTimer = new DispatcherTimer
             {
-                Interval = TimeSpan.FromSeconds(120)
+                Interval = TimeSpan.FromSeconds(STANDBY_SECONDS)
             };
             _standbyTimer.Tick += OnStandbyTimerTick;
 
