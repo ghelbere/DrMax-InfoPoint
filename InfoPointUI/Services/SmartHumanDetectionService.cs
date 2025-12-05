@@ -150,7 +150,7 @@ namespace InfoPointUI.Services
                 if (_consecutivePresenceFrames >= REQUIRED_CONSECUTIVE_FRAMES && !_lastConfirmedState)
                 {
                     _lastConfirmedState = true;
-                    _logger.LogInformation("Human detected in front of tablet");
+                    _logger?.LogInformation("Human detected in front of tablet");
                     ConfirmedHumanPresenceChanged?.Invoke(this, true);
                 }
             }
@@ -162,7 +162,7 @@ namespace InfoPointUI.Services
                 if (_consecutiveAbsenceFrames >= ABSENCE_CONFIRMATION_FRAMES && _lastConfirmedState)
                 {
                     _lastConfirmedState = false;
-                    _logger.LogInformation("No human in front of tablet");
+                    _logger?.LogInformation("No human in front of tablet");
                     ConfirmedHumanPresenceChanged?.Invoke(this, false);
                 }
             }

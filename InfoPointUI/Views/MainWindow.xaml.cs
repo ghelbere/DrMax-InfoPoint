@@ -122,9 +122,10 @@ namespace InfoPointUI.Views
             if (searchBox != null && searchBox.IsVisible && searchBox.IsEnabled)
             {
                 // oare e ok?
-                searchBox.Clear();
+                //searchBox.Clear();
                 //ViewModel?.Products.Clear();
 
+                WindowManager.CloseIfOpen<CardScanWindow>();
                 // de aici e sigur bine :)
                 searchBox.Focus();
                 Keyboard.Focus(searchBox);

@@ -42,11 +42,10 @@ namespace InfoPointUI.Services
         {
             if (!_humanDetectionEnabled) return;
 
-            // Folosește IsInStandbyMode (property-ul tău existent) în loc de _isInStandbyMode
             if (humanPresent && IsInStandbyMode)
             {
                 _logger.LogInformation("Auto-exiting standby - human detected");
-                ForceActiveMode(); // Metoda ta existentă
+                ForceActiveMode(); 
             }
         }
 
