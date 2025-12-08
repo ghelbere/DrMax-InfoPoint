@@ -1,17 +1,13 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using InfoPoint.Models;
 
-namespace InfoPointUI.Models
+namespace InfoPoint.Models
 {
-    public class PagedResult<T>
+    public class PagedProductResult<T>
     {
         public List<T> Items { get; set; } = new();
         public int TotalItems { get; set; }
         public int PageSize { get; set; }
+
         public int TotalPages => (int)Math.Ceiling((double)TotalItems / PageSize);
     }
-
 }

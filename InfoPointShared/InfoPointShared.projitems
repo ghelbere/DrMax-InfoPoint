@@ -1,0 +1,19 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>61bb437a-650e-4fb9-a5f8-8d0330871299</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>InfoPointShared</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Models\CoordinatesDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\FixtureDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\PagedProductResult.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\PlacementMetadataDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProductDTO.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Models\ProductPlacementDTO.cs" />
+  </ItemGroup>
+</Project>

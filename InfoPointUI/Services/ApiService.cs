@@ -1,6 +1,6 @@
 ﻿using System.Net.Http;
 using System.Net.Http.Json;
-using InfoPointUI.Models;
+using InfoPoint.Models;
 
 namespace InfoPointUI.Services;
 
@@ -36,7 +36,7 @@ public class ApiService
     }
 
     // 🔄 Noua metodă cu paginare
-    public async Task<PagedResult<ProductDto>> SearchProductsPagedAsync(string term, string tabletId, string? category, int page, int pageSize)
+    public async Task<PagedProductResult<ProductDto>> SearchProductsPagedAsync(string term, string tabletId, string? category, int page, int pageSize)
     {
         string url = $"https://localhost:7051/api/products/paged?term={term}&tabletId={tabletId}&page={page}&pageSize={pageSize}";
 
@@ -51,11 +51,11 @@ public class ApiService
         {
             response = await _httpClient.SendAsync(request);
             if (!response.IsSuccessStatusCode)
-                return new PagedResult<ProductDto> { Items = new() };
+                return new PagedProductResult<ProductDto> { Items = new() };
         }
         catch
         {
-            return new PagedResult<ProductDto>
+            return new PagedProductResult<ProductDto>
             {
                 Items = new List<ProductDto>
             {
@@ -66,6 +66,6 @@ public class ApiService
             };
         }
 
-        return await response.Content.ReadFromJsonAsync<PagedResult<ProductDto>>() ?? new PagedResult<ProductDto> { Items = new() };
+        return await response.Content.ReadFromJsonAsync<PagedProductResult<ProductDto>>() ?? new PagedProductResult<ProductDto> { Items = new() };
     }
 }

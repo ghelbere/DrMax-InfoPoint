@@ -59,4 +59,6 @@
     </Content>
   </ItemGroup>
 
+  <Import Project="..\InfoPointShared\InfoPointShared.projitems" Label="Shared" />
+
 </Project>

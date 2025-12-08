@@ -1,5 +1,5 @@
 ﻿using InfoPointUI.Commands;
-using InfoPointUI.Models;
+using InfoPoint.Models;
 using InfoPointUI.Services;
 using InfoPointUI.Views;
 using System.Collections.ObjectModel;

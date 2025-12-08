@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfoPointServer", "InfoPoin
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InfoPointUI", "InfoPointUI\InfoPointUI.csproj", "{76D800E4-9A26-46EE-9203-E6C0AA5EE5A7}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "InfoPointShared", "InfoPointShared\InfoPointShared.shproj", "{61BB437A-650E-4FB9-A5F8-8D0330871299}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {49E94674-996C-448A-8060-43FBE59A9697}
+	EndGlobalSection
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		InfoPointShared\InfoPointShared.projitems*{354de4a6-245d-4ebe-8c61-02cdbbb068e7}*SharedItemsImports = 5
+		InfoPointShared\InfoPointShared.projitems*{61bb437a-650e-4fb9-a5f8-8d0330871299}*SharedItemsImports = 13
+		InfoPointShared\InfoPointShared.projitems*{76d800e4-9a26-46ee-9203-e6c0aa5ee5a7}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

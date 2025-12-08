@@ -1,4 +1,4 @@
-﻿using InfoPointUI.Models;
+﻿using InfoPoint.Models;
 using InfoPointUI.Views.ProductDetails;
 using System.Net.Http;
 using System.Threading.Tasks;

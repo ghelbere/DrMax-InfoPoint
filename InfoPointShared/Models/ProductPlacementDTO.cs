@@ -1,4 +1,4 @@
-﻿namespace InfoPointServer.Models
+﻿namespace InfoPoint.Models
 {
     public class ProductPlacementDto
     {

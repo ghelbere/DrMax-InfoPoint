@@ -2,7 +2,7 @@
 using System.Windows;
 using System.Windows.Input;
 using InfoPointUI.Commands;
-using InfoPointUI.Models;
+using InfoPoint.Models;
 
 
 namespace InfoPointUI.ViewModels

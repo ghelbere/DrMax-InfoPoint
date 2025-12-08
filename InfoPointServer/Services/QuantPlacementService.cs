@@ -1,4 +1,4 @@
-﻿using InfoPointServer.Models;
+﻿using InfoPoint.Models;
 using System.Net.Http.Headers;
 using System.Text.Json;
 

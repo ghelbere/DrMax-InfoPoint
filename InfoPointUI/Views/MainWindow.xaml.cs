@@ -1,5 +1,4 @@
 ﻿using InfoPointUI.Helpers;
-using InfoPointUI.Models;
 using InfoPointUI.Sensors;
 using InfoPointUI.Services;
 using InfoPointUI.ViewModels;

@@ -1,4 +1,4 @@
-﻿using InfoPointServer.Models;
+﻿using InfoPoint.Models;
 using InfoPointServer.Services;
 using Microsoft.AspNetCore.Mvc;
 

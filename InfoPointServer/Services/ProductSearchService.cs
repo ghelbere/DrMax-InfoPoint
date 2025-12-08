@@ -1,4 +1,4 @@
-﻿using InfoPointServer.Models;
+﻿using InfoPoint.Models;
 using Microsoft.Data.SqlClient;
 
 namespace InfoPointServer.Services

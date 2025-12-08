@@ -1,4 +1,4 @@
-﻿using InfoPointUI.Models;
+﻿using InfoPoint.Models;
 using InfoPointUI.ViewModels;
 using System.Windows.Controls;
 

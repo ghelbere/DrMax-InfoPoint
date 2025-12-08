@@ -1,4 +1,4 @@
-﻿using InfoPointServer.Models;
+﻿using InfoPoint.Models;
 
 namespace InfoPointServer.Services;
 
