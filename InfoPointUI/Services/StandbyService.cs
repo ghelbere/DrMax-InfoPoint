@@ -2,6 +2,7 @@
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
+using InfoPointUI.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 
 namespace InfoPointUI.Services

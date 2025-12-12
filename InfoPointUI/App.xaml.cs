@@ -1,4 +1,5 @@
 ﻿using InfoPointUI.Services;
+using InfoPointUI.Services.Interfaces;
 using InfoPointUI.ViewModels;
 using InfoPointUI.Views;
 using Microsoft.Extensions.DependencyInjection;

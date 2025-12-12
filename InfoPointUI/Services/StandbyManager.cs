@@ -1,4 +1,5 @@
-﻿using InfoPointUI.Views;
+﻿using InfoPointUI.Services.Interfaces;
+using InfoPointUI.Views;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Windows;

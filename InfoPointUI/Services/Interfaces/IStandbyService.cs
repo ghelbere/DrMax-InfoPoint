@@ -1,6 +1,6 @@
 ﻿using System.ComponentModel;
 
-namespace InfoPointUI.Services
+namespace InfoPointUI.Services.Interfaces
 {
     public interface IStandbyService : INotifyPropertyChanged
     {

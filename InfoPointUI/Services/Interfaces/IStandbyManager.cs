@@ -1,4 +1,4 @@
-﻿namespace InfoPointUI.Services
+﻿namespace InfoPointUI.Services.Interfaces
 {
     public interface IStandbyManager
     {

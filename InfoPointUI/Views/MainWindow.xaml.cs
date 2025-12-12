@@ -1,6 +1,6 @@
 ﻿using InfoPointUI.Helpers;
 using InfoPointUI.Sensors;
-using InfoPointUI.Services;
+using InfoPointUI.Services.Interfaces;
 using InfoPointUI.ViewModels;
 using InfoPointUI.Views.ProductDetails;
 using System.Windows;
@@ -31,14 +31,14 @@ namespace InfoPointUI.Views
 
             txtCardNumber.DataContext = (App)Application.Current;
 
-            this.KeyDown += (s, e) =>
-            {
-                if (e.Key == Key.Escape)
-                {
-                    Application.Current.Shutdown();
-                }
+            //this.KeyDown += (_, e) =>
+            //{
+            //    if (e.Key == Key.Escape)
+            //    {
+            //        Application.Current.Shutdown();
+            //    }
 
-            };
+            //};
 
             InitializeComponentsAndEvents();
 

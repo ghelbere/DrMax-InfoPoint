@@ -1,10 +1,10 @@
-﻿using InfoPointUI.Services;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 using System.Windows.Threading;
 using Microsoft.Extensions.Logging;
 using NLog;
+using InfoPointUI.Services.Interfaces;
 
 namespace InfoPointUI.Views
 {
