@@ -54,6 +54,7 @@ namespace InfoPointUI.Views
                 viewModel.SelectedCategory = "";
             }
 
+            _standbyService = standbyService;
         }
 
         protected override void OnClosed(EventArgs e)
@@ -99,7 +100,8 @@ namespace InfoPointUI.Views
 
         private void OnScanCard(object sender, RoutedEventArgs e)
         {
-            var cardWindow = new CardScanWindow();
+            var cardWindow = App.Current.GetService<CardScanWindow>();
+            cardWindow.Owner = this;
             cardWindow.ShowDialog();
             FocusSearchBox();
         }

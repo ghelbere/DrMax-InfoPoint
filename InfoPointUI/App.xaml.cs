@@ -27,23 +27,6 @@ namespace InfoPointUI
         public static new App Current => (App)Application.Current;
 
         /// <summary>
-        /// Codul cardului de fidelitate scanat - accesibil global
-        /// </summary>
-        public string? LoyaltyCardCode
-        {
-            get => _loyaltyCardCode;
-            set
-            {
-                if (_loyaltyCardCode != value)
-                {
-                    _loyaltyCardCode = value;
-                    OnPropertyChanged();
-                    OnLoyaltyCardCodeChanged?.Invoke(this, EventArgs.Empty);
-                }
-            }
-        }
-
-        /// <summary>
         /// Event care se declanșează când cardul de fidelitate este scanat sau schimbat
         /// </summary>
         public event EventHandler? OnLoyaltyCardCodeChanged;
@@ -115,7 +98,20 @@ namespace InfoPointUI
             services.AddSingleton<IApplicationManager, ApplicationManager>();
             services.AddSingleton<SmartHumanDetectionService>();
 
-            // Add your existing services here based on your current structure
+            // HTTP Client pentru API-ul de validare card
+            services.AddHttpClient<ILoyaltyCardValidator, LoyaltyCardValidatorService>(client =>
+            {
+                // Configurează base address-ul din appsettings.json
+                client.BaseAddress = new Uri("http://localhost:5000");
+                client.Timeout = TimeSpan.FromSeconds(5);
+            });
+
+            // Card Services
+            services.AddSingleton<ICardService, CardService>();
+
+            // Windows
+            services.AddTransient<CardScanWindow>();
+
             // services.AddSingleton<IProductsClient, ProductsClient>();
             // services.AddSingleton<IApiService, ApiService>();
             // services.AddSingleton<IDialogService, DialogService>();
@@ -141,38 +137,6 @@ namespace InfoPointUI
                    throw new InvalidOperationException($"Service of type {typeof(T)} is not registered");
         }
 
-        /// <summary>
-        /// Setează codul cardului de fidelitate și loghează acțiunea
-        /// </summary>
-        public void SetLoyaltyCard(string cardCode)
-        {
-            var logger = LogManager.GetCurrentClassLogger();
-
-            if (string.IsNullOrEmpty(cardCode))
-            {
-                logger.Info("Loyalty card cleared");
-                LoyaltyCardCode = null;
-            }
-            else
-            {
-                logger.Info("Loyalty card scanned: {CardCode}", cardCode);
-                LoyaltyCardCode = cardCode;
-            }
-        }
-
-        /// <summary>
-        /// Șterge cardul de fidelitate curent
-        /// </summary>
-        public void ClearLoyaltyCard()
-        {
-            SetLoyaltyCard(String.Empty);
-        }
-
-        /// <summary>
-        /// Verifică dacă există un card de fidelitate activ
-        /// </summary>
-        public bool HasActiveLoyaltyCard => !string.IsNullOrEmpty(LoyaltyCardCode);
-
         protected override void OnExit(ExitEventArgs e)
         {
             _applicationManager?.ShutdownApplication();
@@ -184,31 +148,5 @@ namespace InfoPointUI
             base.OnExit(e);
         }
 
-        /// <summary>
-        /// Metodă pentru a forța aplicația în modul standby (pentru teste sau cerințe speciale)
-        /// </summary>
-        public void ForceStandbyMode()
-        {
-            var standbyService = GetService<IStandbyService>();
-            standbyService.ForceStandbyMode();
-        }
-
-        /// <summary>
-        /// Metodă pentru a forța aplicația în modul activ
-        /// </summary>
-        public void ForceActiveMode()
-        {
-            var standbyService = GetService<IStandbyService>();
-            standbyService.ForceActiveMode();
-        }
-
-        /// <summary>
-        /// Metodă pentru a reseta timer-ul de standby
-        /// </summary>
-        public void ResetStandbyTimer()
-        {
-            var standbyService = GetService<IStandbyService>();
-            standbyService.ResetStandbyTimer();
-        }
     }
 }
