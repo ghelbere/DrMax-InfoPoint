@@ -1,11 +1,12 @@
-﻿using InfoPointUI.Services.Interfaces;
+﻿using InfoPoint.Models;
+using InfoPointUI.Services.Interfaces;
 
 namespace InfoPointUI.Services
 {
     public class CardService : ICardService
     {
         private readonly ILoyaltyCardValidator _validator;
-        private string _currentCardCode;
+        private string? _currentCardCode;
         private CardValidationResult _currentValidation;
 
         public string CurrentCardCode

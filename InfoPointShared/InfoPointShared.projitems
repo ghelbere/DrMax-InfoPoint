@@ -9,6 +9,7 @@
     <Import_RootNamespace>InfoPointShared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Models\CardValidationResultDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ClientDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\CoordinatesDTO.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\FixtureDTO.cs" />

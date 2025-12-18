@@ -1,4 +1,5 @@
-﻿using InfoPointUI.Helpers;
+﻿using InfoPointUI.Controls;
+using InfoPointUI.Helpers;
 using InfoPointUI.Sensors;
 using InfoPointUI.Services.Interfaces;
 using InfoPointUI.ViewModels;
@@ -29,8 +30,6 @@ namespace InfoPointUI.Views
             // Register with standby service
             standbyService.RegisterActiveWindow(this);
 
-            txtCardNumber.DataContext = (App)Application.Current;
-
             //this.KeyDown += (_, e) =>
             //{
             //    if (e.Key == Key.Escape)
@@ -55,6 +54,11 @@ namespace InfoPointUI.Views
             }
 
             _standbyService = standbyService;
+
+#if !DEBUG
+            btnClose.Visibility = Visibility.Collapsed;
+            btnStandbyButton.Visibility = Visibility.Collapsed;  
+#endif
         }
 
         protected override void OnClosed(EventArgs e)
@@ -67,6 +71,9 @@ namespace InfoPointUI.Views
         {
             FocusSearchBox();
             Keyboard.Focus(SearchTextBox);
+
+            ViewModel.PageSize = (int)(ProductItemsControl.ActualWidth / 245) * (int)(ProductItemsControl.ActualHeight / 215);
+
 
             _swipeHandler = new SwipeGestureHandler(MainGrid, ProductItemsControl)
             {

@@ -1,12 +1,12 @@
-﻿using InfoPointUI.Commands;
+﻿using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using InfoPoint.Models;
 using InfoPointUI.Services;
+using InfoPointUI.Services.Interfaces;
 using InfoPointUI.Views;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.IO;
 using System.Net.Http;
-using System.Runtime.CompilerServices;
 using System.Timers;
 using System.Windows;
 using System.Windows.Input;
@@ -16,45 +16,21 @@ using System.Windows.Threading;
 
 namespace InfoPointUI.ViewModels;
 
-public class MainViewModel : INotifyPropertyChanged
+public partial class MainViewModel : ObservableObject
 {
+    // 📦 Colecții
     public ObservableCollection<ProductDto> Products { get; set; } = new();
 
+    // 🔍 Search & Category 
+    [ObservableProperty]
+    [NotifyPropertyChangedFor(nameof(SearchCommand))]
     private string _searchTerm = "";
-    public string SearchTerm
-    {
-        get => _searchTerm;
-        set
-        {
-            if (_searchTerm != value)
-            {
-                _searchTerm = value;
-                CurrentPage = 0;
-                OnPropertyChanged();
-                debounceTimer.Stop();
-                debounceTimer.Start();
-                ((RelayCommand<object>)SearchCommand).RaiseCanExecuteChanged();
-            }
-        }
-    }
 
+    [ObservableProperty]
     private string? _selectedCategory = "Toate";
-    public string? SelectedCategory
-    {
-        get => _selectedCategory;
-        set
-        {
-            if (_selectedCategory != value)
-            {
-                _selectedCategory = value;
-                CurrentPage = 0;
-                OnPropertyChanged();
-                _ = SearchAsync();
-            }
-        }
-    }
 
-    // 🔢 Paginare
+    // 📄 Paginare - proprietăți care NU folosesc ObservableProperty
+    // (pentru că au logică custom în setter)
     public int PageSize { get; set; } = 28;
 
     private int _currentPage = 0;
@@ -63,10 +39,8 @@ public class MainViewModel : INotifyPropertyChanged
         get => _currentPage;
         set
         {
-            if (_currentPage != value)
+            if (SetProperty(ref _currentPage, value))
             {
-                _currentPage = value;
-                OnPropertyChanged();
                 _ = SearchAsync();
                 OnPropertyChanged(nameof(DisplayPage));
                 OnPropertyChanged(nameof(IsLastPage));
@@ -74,78 +48,154 @@ public class MainViewModel : INotifyPropertyChanged
         }
     }
 
-    public int DisplayPage => (TotalPages<1)?0:CurrentPage + 1;
-
     private int _totalPages = 1;
     public int TotalPages
     {
         get => _totalPages;
         set
         {
-            if (_totalPages != value)
+            if (SetProperty(ref _totalPages, value <= 0 ? 1 : value))
             {
-                _totalPages = value <= 0 ? 1 : value;
-                OnPropertyChanged();
-                OnPropertyChanged(nameof(IsLastPage)); // ne asigurăm că se reevaluează
+                OnPropertyChanged(nameof(IsLastPage));
             }
         }
     }
 
+    // 💳 Card Properties - Astea merg cu ObservableProperty
+    [ObservableProperty]
+    private bool _isCardScanned = false;
 
+    [ObservableProperty]
+    private string _cardStatus = "Aștept scanare card...";
+
+    [ObservableProperty]
+    private string _cardNumber = string.Empty;
+
+    // 🔧 Calculated Properties
+    public int DisplayPage => (TotalPages < 1) ? 0 : CurrentPage + 1;
     public bool IsLastPage => DisplayPage >= TotalPages;
 
+    // ⚙️ Services & Timers
+    private readonly System.Timers.Timer _debounceTimer;
+    private readonly ApiService _api = new();
+    private readonly ICardService _cardService;
+    private const string TabletId = "TAB-999";
+
+    // 🎛️ Commands
     public ICommand SearchCommand { get; }
     public ICommand SelectCategoryCommand { get; }
     public ICommand NextPageCommand { get; }
     public ICommand PreviousPageCommand { get; }
+    public ICommand ScanCardCommand { get; }
 
-    private readonly System.Timers.Timer debounceTimer;
-    private readonly ApiService _api = new();
-    private readonly string TabletId = "TAB-999";
-
-    public MainViewModel()
+    public MainViewModel(ICardService cardService)
     {
-        TotalPages = 1;         // sau 0, dar ideal e să fie > 0
+        _cardService = cardService ?? throw new ArgumentNullException(nameof(cardService));
 
-        // Debounce timer for searching
-        debounceTimer = new(500);
-        debounceTimer.Elapsed += async (_, _) => await SearchAsync();
-        debounceTimer.AutoReset = false;
+        // ⏱️ Debounce Timer pentru search
+        _debounceTimer = new System.Timers.Timer(500);
+        _debounceTimer.Elapsed += async (_, _) => await SearchAsync();
+        _debounceTimer.AutoReset = false;
 
-        SearchCommand = new RelayCommand<object>(
-            async _ => await SearchAsync(),
-            _ => !string.IsNullOrWhiteSpace(SearchTerm)
+        // 🎯 Initializează Commands
+        SearchCommand = new AsyncRelayCommand(
+            SearchAsync,
+            () => !string.IsNullOrWhiteSpace(SearchTerm)
         );
 
         SelectCategoryCommand = new RelayCommand<string>(category =>
         {
             SelectedCategory = category;
-
-            // Focus searchbox
-            Application.Current.Dispatcher.BeginInvoke(new Action(() =>
+            Application.Current.Dispatcher.BeginInvoke(() =>
             {
-                var mainWindow = Application.Current.MainWindow as MainWindow;
-                mainWindow?.FocusSearchBox();
-            }), DispatcherPriority.ContextIdle);
+                (Application.Current.MainWindow as MainWindow)?.FocusSearchBox();
+            }, DispatcherPriority.ContextIdle);
         });
 
-        NextPageCommand = new RelayCommand<object>(_ =>
-        {
-            if (Products.Count < PageSize)
-            {
-                return;
-            }
+        NextPageCommand = new RelayCommand(
+            () => CurrentPage++,
+            () => Products.Count >= PageSize
+        );
 
-            CurrentPage++;
+        PreviousPageCommand = new RelayCommand(
+            () => { if (CurrentPage > 0) CurrentPage--; },
+            () => CurrentPage > 0
+        );
+
+        ScanCardCommand = new RelayCommand(() =>
+        {
+            var cardWindow = App.Current.GetService<CardScanWindow>();
+            cardWindow.Owner = Application.Current.MainWindow;
+            cardWindow.ShowDialog();
         });
 
-        PreviousPageCommand = new RelayCommand<object>(_ =>
+        // 🔔 Abonează-te la evenimente CardService
+        _cardService.CardValidated += OnCardValidated;
+        _cardService.CardValidationFailed += OnCardValidationFailed;
+
+        // 📊 Initializează cu starea curentă
+        if (_cardService.CurrentCardValidation?.IsValid == true)
         {
-            if (CurrentPage > 0)
-                CurrentPage--;
+            UpdateFromCardService();
+        }
+    }
+
+    // 🔄 Partial Methods pentru ObservableProperty changed events
+    partial void OnSearchTermChanged(string value)
+    {
+        CurrentPage = 0;
+        _debounceTimer.Stop();
+        _debounceTimer.Start();
+        ((AsyncRelayCommand)SearchCommand).NotifyCanExecuteChanged();
+    }
+
+    partial void OnSelectedCategoryChanged(string? value)
+    {
+        CurrentPage = 0;
+        _ = SearchAsync();
+    }
+
+    // 💳 Card Event Handlers
+    private void OnCardValidated(object? sender, EventArgs e)
+    {
+        Application.Current.Dispatcher.Invoke(UpdateFromCardService);
+    }
+
+    private void OnCardValidationFailed(object? sender, string errorMessage)
+    {
+        Application.Current.Dispatcher.Invoke(() =>
+        {
+            IsCardScanned = false;
+            CardStatus = $"✗ {errorMessage}";
+            CardNumber = string.Empty;
         });
     }
 
+    private void UpdateFromCardService()
+    {
+        var validation = _cardService.CurrentCardValidation;
+        if (validation?.IsValid == true)
+        {
+            CardNumber = validation.CardNumber ?? String.Empty;
+            IsCardScanned = true;
+            CardStatus = $"✓ Card: {validation.CardNumber}"; // GDPR friendly, no client name
+        }
+        else
+        {
+            CardNumber = String.Empty;
+            IsCardScanned = false;
+            CardStatus = String.Empty;
+        }
+    }
+
+    [RelayCommand]
+    private void ClearCard()
+    {
+        _cardService.ClearCard();
+        UpdateFromCardService();
+    }
+
+    // 🔍 Search Logic
     public async Task SearchAsync()
     {
         var result = await _api.SearchProductsPagedAsync(
@@ -165,16 +215,22 @@ public class MainViewModel : INotifyPropertyChanged
             }
 
             TotalPages = result.TotalPages;
+
+            // Updatează CanExecute pentru butoanele de paginare
+            ((RelayCommand)NextPageCommand).NotifyCanExecuteChanged();
+            ((RelayCommand)PreviousPageCommand).NotifyCanExecuteChanged();
         });
     }
 
+    // 🖼️ Image Loading
     private async Task LoadProductImageAsync(ProductDto product)
     {
         ImageSource? image = null;
 
-        // 1️⃣ Verifică dacă imaginea există ca StaticResource în App.xaml
+        // 1️⃣ Verifică StaticResource
         if (Application.Current.Resources.Contains(product.ImageUrl.ToLower()))
-            try 
+        {
+            try
             {
                 var uriString = Application.Current.Resources[product.ImageUrl.ToLower()] as string;
                 if (!string.IsNullOrEmpty(uriString))
@@ -187,11 +243,14 @@ public class MainViewModel : INotifyPropertyChanged
                     bmp.Freeze();
                     image = bmp;
                 }
-            } catch {
+            }
+            catch
+            {
                 image = null;
             }
+        }
 
-        // 2️⃣ Dacă nu e resursă, încearcă să o încarce din URL
+        // 2️⃣ Încarcă din URL
         if (image == null && Uri.TryCreate(product.ImageUrl, UriKind.Absolute, out Uri? uri) &&
             (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
         {
@@ -210,11 +269,11 @@ public class MainViewModel : INotifyPropertyChanged
             }
             catch
             {
-                // Ignorăm excepția, trecem la fallback
+                // Ignoră eroarea
             }
         }
 
-        // 3️⃣ Fallback: imagine default
+        // 3️⃣ Fallback
         if (image == null)
         {
             image = new BitmapImage(new Uri("pack://application:,,,/InfoPointUI;component/Assets/Images/empty_image.png"));
@@ -223,8 +282,14 @@ public class MainViewModel : INotifyPropertyChanged
         product.ProductImage = image;
     }
 
-
-    public event PropertyChangedEventHandler? PropertyChanged;
-    protected void OnPropertyChanged([CallerMemberName] string? name = null)
-        => PropertyChanged?.Invoke(this, new(name));
+    // 🧹 Cleanup
+    ~MainViewModel()
+    {
+        if (_cardService != null)
+        {
+            _cardService.CardValidated -= OnCardValidated;
+            _cardService.CardValidationFailed -= OnCardValidationFailed;
+        }
+        _debounceTimer?.Dispose();
+    }
 }

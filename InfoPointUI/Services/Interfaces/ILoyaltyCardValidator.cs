@@ -1,4 +1,5 @@
-﻿namespace InfoPointUI.Services.Interfaces
+﻿using InfoPoint.Models;
+namespace InfoPointUI.Services.Interfaces
 {
     public interface ILoyaltyCardValidator
     {
@@ -6,11 +7,4 @@
         Task<CardValidationResult> ValidateCardAsync(string cardCode);
     }
 
-    public class CardValidationResult
-    {
-        public bool IsValid { get; set; }
-        public string? ClientName { get; set; }
-        public bool IsActive { get; set; }
-        public string? ErrorMessage { get; set; }
-    }
 }

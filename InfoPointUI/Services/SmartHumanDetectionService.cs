@@ -29,6 +29,8 @@ namespace InfoPointUI.Services
 
         public void StartDetection()
         {
+            _lastConfirmedState = false;
+
             if (_isRunning) return;
 
             try
@@ -147,10 +149,10 @@ namespace InfoPointUI.Services
                 _consecutivePresenceFrames++;
                 _consecutiveAbsenceFrames = 0;
 
-                if (_consecutivePresenceFrames >= REQUIRED_CONSECUTIVE_FRAMES && !_lastConfirmedState)
+                if (_consecutivePresenceFrames >= REQUIRED_CONSECUTIVE_FRAMES) // && !_lastConfirmedState)
                 {
                     _lastConfirmedState = true;
-                    _logger?.LogInformation("Human detected in front of tablet");
+                    //_logger?.LogInformation("Human detected in front of tablet");
                     ConfirmedHumanPresenceChanged?.Invoke(this, true);
                 }
             }
@@ -162,7 +164,7 @@ namespace InfoPointUI.Services
                 if (_consecutiveAbsenceFrames >= ABSENCE_CONFIRMATION_FRAMES && _lastConfirmedState)
                 {
                     _lastConfirmedState = false;
-                    _logger?.LogInformation("No human in front of tablet");
+                    //_logger?.LogInformation("No human in front of tablet");
                     ConfirmedHumanPresenceChanged?.Invoke(this, false);
                 }
             }
@@ -171,7 +173,8 @@ namespace InfoPointUI.Services
         public void StopDetection()
         {
             _isRunning = false;
-            _detectionThread?.Join(3000);
+            _lastConfirmedState = false;
+            _detectionThread?.Join(1000);
             _camera?.Release();
         }
 

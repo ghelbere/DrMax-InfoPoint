@@ -58,7 +58,10 @@ namespace InfoPointUI.Services
                     _logger.LogInformation("MainWindow shown");
                 }
 
+#if !DEBUG
                 _mainWindow.WindowState = WindowState.Maximized;
+                _mainWindow.WindowStyle = WindowStyle.None;
+#endif
                 _mainWindow.Activate();
                 _mainWindow.Focus();
 
@@ -97,10 +100,13 @@ namespace InfoPointUI.Services
         {
             Application.Current.Dispatcher.Invoke(() =>
             {
+#if !DEBUG
                 _mainWindow.WindowState = WindowState.Maximized;
+                _mainWindow.WindowStyle = WindowStyle.None;
                 _mainWindow.WindowStyle = WindowStyle.None;
                 _mainWindow.ResizeMode = ResizeMode.NoResize;
                 _mainWindow.Topmost = true;
+#endif
                 _logger.LogDebug("Main window configured for kiosk mode");
             });
         }

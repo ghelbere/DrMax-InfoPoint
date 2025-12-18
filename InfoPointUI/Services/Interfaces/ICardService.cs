@@ -1,4 +1,6 @@
-﻿namespace InfoPointUI.Services.Interfaces
+﻿using InfoPoint.Models;
+
+namespace InfoPointUI.Services.Interfaces
 {
     public interface ICardService
     {

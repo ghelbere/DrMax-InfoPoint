@@ -17,7 +17,11 @@ namespace InfoPointUI.Services
         private bool _isTransitioning;
         private readonly SmartHumanDetectionService _humanDetectionService;
         private bool _humanDetectionEnabled = true;
+#if !DEBUG
         private const int STANDBY_SECONDS = 120; // 120 secunde
+#else
+        private const int STANDBY_SECONDS = 15; // 15 secunde in DEBUG
+#endif
 
         public StandbyService(ILogger<StandbyService> logger, SmartHumanDetectionService humanDetectionService)
         {
@@ -186,6 +190,7 @@ namespace InfoPointUI.Services
 
             _logger.LogInformation("=== FORCING STANDBY MODE ===");
 
+            StartHumanDetection();
             StartTransition();
 
             IsInStandbyMode = true;
@@ -206,6 +211,7 @@ namespace InfoPointUI.Services
 
             _logger.LogInformation("=== FORCING ACTIVE MODE ===");
 
+            StopHumanDetection();
             StartTransition();
 
             IsInStandbyMode = false;
@@ -213,6 +219,11 @@ namespace InfoPointUI.Services
 
             _logger.LogInformation("Now in active mode. Timer started with interval: {Interval}", _standbyTimer.Interval);
             OnPropertyChanged(nameof(IsInStandbyMode));
+        }
+
+        private void StopHumanDetection()
+        {
+            _humanDetectionService.StopDetection();
         }
 
         private void OnStandbyTimerTick(object? sender, EventArgs e)

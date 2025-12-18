@@ -56,9 +56,15 @@ namespace InfoPointUI.Views
 
             // Folosește serviciul injectat
             var result = await _cardService.ValidateAndStoreCardAsync(code);
-
-            // UI-ul se va actualiza prin evenimente (OnCardValidated/OnCardValidationFailed)
-            // Fereastra se va închide automat dacă cardul e valid
+            if (result.IsValid)
+            {
+                Close();
+            }
+            else
+            {
+                txtCardCode.Text = string.Empty;
+                txtCardCode.Focus();
+            }
         }
 
         private void OnCardValidated(object? sender, EventArgs e)

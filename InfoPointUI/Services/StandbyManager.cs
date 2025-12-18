@@ -35,13 +35,20 @@ namespace InfoPointUI.Services
                     if (_currentStandbyWindow != null)
                     {
                         _currentStandbyWindow.Show();
+                        #if !DEBUG
                         _currentStandbyWindow.WindowState = WindowState.Maximized;
+                        #endif
                         _currentStandbyWindow.Activate();
                         _logger.LogDebug("Standby window shown (existing instance)");
                         return;
                     }
 
                     _currentStandbyWindow = new StandbyWindow(_standbyService);
+#if !DEBUG
+                    _currentStandbyWindow.WindowState = WindowState.Maximized;
+#else
+                    _currentStandbyWindow.WindowState = WindowState.Normal;
+#endif
                     _currentStandbyWindow.Show();
 
                     _isStandbyMode = true;

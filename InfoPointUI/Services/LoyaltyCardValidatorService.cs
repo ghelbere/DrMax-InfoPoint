@@ -37,45 +37,58 @@ namespace InfoPointUI.Services
                     IsValid = false,
                     ErrorMessage = "Format card invalid"
                 };
+            } else
+            {
+                //TODO: Remove this, this is only for local testing without API
+                return new CardValidationResult
+                {
+                    IsValid = true,
+                    ClientName = "Client",
+                    CardNumber = cardCode,
+                    IsActive = false,
+                    ErrorMessage = null
+                };
             }
 
             // PAS 2: Validare prin API
             try
-            {
-                var response = await _httpClient.PostAsJsonAsync(
-                    "/api/client/card-validate",
-                    new { CardCode = cardCode });
-
-                if (response.IsSuccessStatusCode)
                 {
-                    var clientDto = await response.Content.ReadFromJsonAsync<ClientDto>();
+                    var response = await _httpClient.PostAsJsonAsync(
+                        "/api/client/card-validate",
+                        new { CardCode = cardCode });
 
-                    return new CardValidationResult
+                    if (response.IsSuccessStatusCode)
                     {
-                        IsValid = true,
-                        ClientName = clientDto?.FullName ?? "Client",
-                        IsActive = true, // Sau din clientDto
-                        ErrorMessage = null
-                    };
+                        var clientDto = await response.Content.ReadFromJsonAsync<ClientDto>();
+
+                        return new CardValidationResult
+                        {
+                            IsValid = true,
+                            ClientName = clientDto?.FullName ?? "Client",
+                            CardNumber = cardCode,
+                            IsActive = clientDto?.IsActive ?? false,
+                            ErrorMessage = null
+                        };
+                    }
+                    else
+                    {
+                        return new CardValidationResult
+                        {
+                            IsValid = false,
+                            CardNumber = cardCode,
+                            ErrorMessage = "Card invalid sau inactiv"
+                        };
+                    }
                 }
-                else
+                catch (Exception ex)
                 {
+                    _logger.LogError(ex, $"API validation failed for card: {cardCode}");
                     return new CardValidationResult
                     {
                         IsValid = false,
-                        ErrorMessage = "Card invalid sau inactiv"
+                        ErrorMessage = "Eroare de conexiune"
                     };
                 }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, $"API validation failed for card: {cardCode}");
-                return new CardValidationResult
-                {
-                    IsValid = false,
-                    ErrorMessage = "Eroare de conexiune"
-                };
-            }
         }
 
         private static bool IsValidEAN13(string code)
