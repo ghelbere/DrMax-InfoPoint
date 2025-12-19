@@ -4,6 +4,7 @@ using InfoPoint.Models;
 using InfoPointUI.Services;
 using InfoPointUI.Services.Interfaces;
 using InfoPointUI.Views;
+using Microsoft.Extensions.Configuration;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Net.Http;
@@ -77,9 +78,10 @@ public partial class MainViewModel : ObservableObject
 
     // ⚙️ Services & Timers
     private readonly System.Timers.Timer _debounceTimer;
-    private readonly ApiService _api = new();
     private readonly ICardService _cardService;
-    private const string TabletId = "TAB-999";
+    private readonly IApiService _apiService;
+    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly string _tabletId;
 
     // 🎛️ Commands
     public ICommand SearchCommand { get; }
@@ -88,55 +90,63 @@ public partial class MainViewModel : ObservableObject
     public ICommand PreviousPageCommand { get; }
     public ICommand ScanCardCommand { get; }
 
-    public MainViewModel(ICardService cardService)
+    public MainViewModel(ICardService cardService, IApiService apiService, IHttpClientFactory httpClientFactory, IConfiguration configuration)
     {
         _cardService = cardService ?? throw new ArgumentNullException(nameof(cardService));
+        _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
+        _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
 
-        // ⏱️ Debounce Timer pentru search
-        _debounceTimer = new System.Timers.Timer(500);
-        _debounceTimer.Elapsed += async (_, _) => await SearchAsync();
-        _debounceTimer.AutoReset = false;
-
-        // 🎯 Initializează Commands
-        SearchCommand = new AsyncRelayCommand(
-            SearchAsync,
-            () => !string.IsNullOrWhiteSpace(SearchTerm)
-        );
-
-        SelectCategoryCommand = new RelayCommand<string>(category =>
+        // TabletId din configurație
+        _tabletId = configuration["TabletSettings:Id"] ?? "TAB-999";
         {
-            SelectedCategory = category;
-            Application.Current.Dispatcher.BeginInvoke(() =>
+            _cardService = cardService ?? throw new ArgumentNullException(nameof(cardService));
+
+            // ⏱️ Debounce Timer pentru search
+            _debounceTimer = new System.Timers.Timer(500);
+            _debounceTimer.Elapsed += async (_, _) => await SearchAsync();
+            _debounceTimer.AutoReset = false;
+
+            // 🎯 Initializează Commands
+            SearchCommand = new AsyncRelayCommand(
+                SearchAsync,
+                () => !string.IsNullOrWhiteSpace(SearchTerm)
+            );
+
+            SelectCategoryCommand = new RelayCommand<string>(category =>
             {
-                (Application.Current.MainWindow as MainWindow)?.FocusSearchBox();
-            }, DispatcherPriority.ContextIdle);
-        });
+                SelectedCategory = category;
+                Application.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    (Application.Current.MainWindow as MainWindow)?.FocusSearchBox();
+                }, DispatcherPriority.ContextIdle);
+            });
 
-        NextPageCommand = new RelayCommand(
-            () => CurrentPage++,
-            () => Products.Count >= PageSize
-        );
+            NextPageCommand = new RelayCommand(
+                () => CurrentPage++,
+                () => Products.Count >= PageSize
+            );
 
-        PreviousPageCommand = new RelayCommand(
-            () => { if (CurrentPage > 0) CurrentPage--; },
-            () => CurrentPage > 0
-        );
+            PreviousPageCommand = new RelayCommand(
+                () => { if (CurrentPage > 0) CurrentPage--; },
+                () => CurrentPage > 0
+            );
 
-        ScanCardCommand = new RelayCommand(() =>
-        {
-            var cardWindow = App.Current.GetService<CardScanWindow>();
-            cardWindow.Owner = Application.Current.MainWindow;
-            cardWindow.ShowDialog();
-        });
+            ScanCardCommand = new RelayCommand(() =>
+            {
+                var cardWindow = App.Current.GetService<CardScanWindow>();
+                cardWindow.Owner = Application.Current.MainWindow;
+                cardWindow.ShowDialog();
+            });
 
-        // 🔔 Abonează-te la evenimente CardService
-        _cardService.CardValidated += OnCardValidated;
-        _cardService.CardValidationFailed += OnCardValidationFailed;
+            // 🔔 Abonează-te la evenimente CardService
+            _cardService.CardValidated += OnCardValidated;
+            _cardService.CardValidationFailed += OnCardValidationFailed;
 
-        // 📊 Initializează cu starea curentă
-        if (_cardService.CurrentCardValidation?.IsValid == true)
-        {
-            UpdateFromCardService();
+            // 📊 Initializează cu starea curentă
+            if (_cardService.CurrentCardValidation?.IsValid == true)
+            {
+                UpdateFromCardService();
+            }
         }
     }
 
@@ -198,9 +208,9 @@ public partial class MainViewModel : ObservableObject
     // 🔍 Search Logic
     public async Task SearchAsync()
     {
-        var result = await _api.SearchProductsPagedAsync(
+        var result = await _apiService.SearchProductsPagedAsync(
             SearchTerm,
-            TabletId,
+            _tabletId, // Folosește tabletId din configurație
             SelectedCategory == "Toate" ? null : SelectedCategory,
             CurrentPage,
             PageSize);
@@ -211,12 +221,11 @@ public partial class MainViewModel : ObservableObject
             foreach (var product in result.Items)
             {
                 Products.Add(product);
-                _ = LoadProductImageAsync(product); // fire-and-forget
+                _ = LoadProductImageAsync(product);
             }
 
             TotalPages = result.TotalPages;
 
-            // Updatează CanExecute pentru butoanele de paginare
             ((RelayCommand)NextPageCommand).NotifyCanExecuteChanged();
             ((RelayCommand)PreviousPageCommand).NotifyCanExecuteChanged();
         });
@@ -250,14 +259,14 @@ public partial class MainViewModel : ObservableObject
             }
         }
 
-        // 2️⃣ Încarcă din URL
+        // 2️⃣ Încarcă din URL folosind HttpClient factory
         if (image == null && Uri.TryCreate(product.ImageUrl, UriKind.Absolute, out Uri? uri) &&
             (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps))
         {
             try
             {
-                using var http = new HttpClient();
-                var bytes = await http.GetByteArrayAsync(uri);
+                var httpClient = _httpClientFactory.CreateClient("ImageClient");
+                var bytes = await httpClient.GetByteArrayAsync(uri);
                 using var ms = new MemoryStream(bytes);
                 var bmp = new BitmapImage();
                 bmp.BeginInit();
@@ -281,7 +290,6 @@ public partial class MainViewModel : ObservableObject
 
         product.ProductImage = image;
     }
-
     // 🧹 Cleanup
     ~MainViewModel()
     {

@@ -2,15 +2,16 @@
 using InfoPointUI.Services.Interfaces;
 using InfoPointUI.ViewModels;
 using InfoPointUI.Views;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Configuration.Json;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using NLog;
 using NLog.Extensions.Logging;
-using System;
 using System.ComponentModel;
 using System.Globalization;
+using System.Net.Http;
 using System.Runtime.CompilerServices;
-using System.Threading;
 using System.Windows;
 
 namespace InfoPointUI
@@ -84,7 +85,15 @@ namespace InfoPointUI
 
         private void ConfigureServices(IServiceCollection services)
         {
-            // Logging with NLog
+            // ✅ 1. ADĂUGĂ CONFIGURAȚIA
+            var configuration = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory) // ✅ FIXED: Use AppContext.BaseDirectory for base path
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .Build();
+
+            services.AddSingleton<IConfiguration>(configuration);
+
+            // ✅ 2. LOGGING CU NLOG
             services.AddLogging(builder =>
             {
                 builder.ClearProviders();
@@ -92,37 +101,73 @@ namespace InfoPointUI
                 builder.AddNLog();
             });
 
+            // ✅ 3. EXTRAGE SETĂRILE DIN CONFIGURARE
+            var apiBaseUrl = configuration["ApiSettings:BaseUrl"] ?? "https://localhost:7175";
+            var tabletId = configuration["TabletSettings:Id"] ?? "TAB-999";
+
+            // ✅ 4. UN SINGUR HTTPCLIENT PENTRU TOATE SERVICIILE API (ACELAȘI SERVER)
+            services.AddHttpClient("InfoPointApi", client =>
+            {
+                client.BaseAddress = new Uri(apiBaseUrl);
+                client.Timeout = TimeSpan.FromSeconds(30);
+                client.DefaultRequestHeaders.Add("Tablet-ID", tabletId); // Header comun
+            })
+            .ConfigurePrimaryHttpMessageHandler(() => new HttpClientHandler
+            {
+                ServerCertificateCustomValidationCallback =
+                    (message, cert, chain, errors) => true
+            });
+
+            // ✅ 5. REGISTREAZĂ SERVICIILE CARE FOLOSESC ACELAȘI HTTPCLIENT
+            // ApiService pentru căutare produse
+            services.AddSingleton<IApiService>(provider =>
+            {
+                var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+                var httpClient = httpClientFactory.CreateClient("InfoPointApi");
+                var logger = provider.GetRequiredService<ILogger<ApiService>>();
+                return new ApiService(httpClient, logger);
+            });
+
+            // LoyaltyCardValidatorService pentru validare card (ACELAȘI SERVER!)
+            services.AddSingleton<ILoyaltyCardValidator>(provider =>
+            {
+                var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+                var httpClient = httpClientFactory.CreateClient("InfoPointApi"); // ACELAȘI CLIENT!
+                var logger = provider.GetRequiredService<ILogger<LoyaltyCardValidatorService>>();
+                return new LoyaltyCardValidatorService(httpClient, logger);
+            });
+
+            // ✅ 6. HTTP CLIENT PENTRU IMAGINI (SEPARAT, FĂRĂ BASE ADDRESS)
+            services.AddHttpClient("ImageClient", client =>
+            {
+                client.Timeout = TimeSpan.FromSeconds(10);
+                // ❌ NU seta BaseAddress aici - fiecare imagine are URL-ul ei
+            });
+
+            // ✅ 7. SERVICIILE EXISTENTE
             // Standby Services
             services.AddSingleton<IStandbyService, StandbyService>();
             services.AddSingleton<IStandbyManager, StandbyManager>();
             services.AddSingleton<IApplicationManager, ApplicationManager>();
             services.AddSingleton<SmartHumanDetectionService>();
 
-            // HTTP Client pentru API-ul de validare card
-            services.AddHttpClient<ILoyaltyCardValidator, LoyaltyCardValidatorService>(client =>
-            {
-                // Configurează base address-ul din appsettings.json
-                client.BaseAddress = new Uri("http://localhost:5000");
-                client.Timeout = TimeSpan.FromSeconds(5);
-            });
-
             // Card Services
             services.AddSingleton<ICardService, CardService>();
 
-            // Windows
+            // ✅ 8. VIEWMODELS
+            services.AddTransient<MainViewModel>(provider =>
+            {
+                var cardService = provider.GetRequiredService<ICardService>();
+                var apiService = provider.GetRequiredService<IApiService>();
+                var configuration = provider.GetRequiredService<IConfiguration>();
+                var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+
+                return new MainViewModel(cardService, apiService, httpClientFactory, configuration);
+            });
+
+            // ✅ 9. WINDOWS
             services.AddTransient<CardScanWindow>();
-
-            // services.AddSingleton<IProductsClient, ProductsClient>();
-            // services.AddSingleton<IApiService, ApiService>();
-            // services.AddSingleton<IDialogService, DialogService>();
-            // services.AddSingleton<IScreenConfigurationClient, ScreenConfigurationClient>();
-
-            // ViewModels
-            services.AddTransient<MainViewModel>();
-
-            // Views
             services.AddSingleton<MainWindow>();
-            // Note: StandbyWindow is created on-demand by StandbyManager
         }
 
         /// <summary>

@@ -1,71 +1,75 @@
-﻿using System.Net.Http;
+﻿using InfoPoint.Models;
+using InfoPointUI.Services.Interfaces;
+using Microsoft.Extensions.Logging;
+using NLog;
+using System;
+using System.Net.Http;
 using System.Net.Http.Json;
-using InfoPoint.Models;
+using System.Threading.Tasks;
+using System.Web;
+using System.Windows;
 
-namespace InfoPointUI.Services;
-
-public class ApiService
+namespace InfoPointUI.Services
 {
-    private readonly HttpClient _httpClient = new();
-
-    public async Task<List<ProductDto>> SearchProductsAsync(string term, string tabletId, string? category)
+    public class ApiService : IApiService
     {
-        string url = $"https://localhost:7051/api/products?term={term}&tabletId={tabletId}";
+        private readonly HttpClient _httpClient;
+        private readonly ILogger<ApiService> _logger;
 
-        if (!string.IsNullOrWhiteSpace(category))
-            url += $"&category={Uri.EscapeDataString(category)}";
-
-        var request = new HttpRequestMessage(HttpMethod.Get, url);
-        request.Headers.Add("Tablet-ID", tabletId);
-
-        HttpResponseMessage? response = null;
-        try
+        // HttpClient ESTE INJECTAT
+        public ApiService(HttpClient httpClient, ILogger<ApiService> logger)
         {
-            response = await _httpClient.SendAsync(request);
-            if (!response.IsSuccessStatusCode) return new();
+            _httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+            _logger.LogInformation("ApiService initialized");
         }
-        catch
+
+        public async Task<PagedProductResult<ProductDto>> SearchProductsPagedAsync(
+            string query,
+            string tabletId,
+            string? category,
+            int page,
+            int pageSize)
+
         {
-            return new List<ProductDto>
+            if (String.IsNullOrEmpty(query))
+                return new PagedProductResult<ProductDto>
+                {
+                    Items = new List<ProductDto>(),
+                    PageSize = 0,
+                    TotalItems = 0
+                };
+
+            try
             {
-                new() { Id = -1, Name = "Eroare server", Price = 0.00m, Location = "Server oprit", ImageUrl = "", Category = "Toate" }
-            };
-        }
+                var url = $"{_httpClient.BaseAddress}api/products/paged?term={query}&tabletId={tabletId}&page={page}&pageSize={pageSize}";
 
-        return await response.Content.ReadFromJsonAsync<List<ProductDto>>() ?? new();
-    }
+                if (!string.IsNullOrEmpty(category))
+                    url += $"&category={HttpUtility.UrlEncode(category)}";
 
-    // 🔄 Noua metodă cu paginare
-    public async Task<PagedProductResult<ProductDto>> SearchProductsPagedAsync(string term, string tabletId, string? category, int page, int pageSize)
-    {
-        string url = $"https://localhost:7051/api/products/paged?term={term}&tabletId={tabletId}&page={page}&pageSize={pageSize}";
+                _logger.LogDebug($"API Call: {url}");
+                var response = await _httpClient.GetAsync(url);
+                response.EnsureSuccessStatusCode();
 
-        if (!string.IsNullOrWhiteSpace(category))
-            url += $"&category={Uri.EscapeDataString(category)}";
+                var products = await response.Content.ReadFromJsonAsync<PagedProductResult<ProductDto>>()
+                    ?? new PagedProductResult<ProductDto>();
 
-        var request = new HttpRequestMessage(HttpMethod.Get, url);
-        request.Headers.Add("Tablet-ID", tabletId);
-
-        HttpResponseMessage? response = null;
-        try
-        {
-            response = await _httpClient.SendAsync(request);
-            if (!response.IsSuccessStatusCode)
-                return new PagedProductResult<ProductDto> { Items = new() };
-        }
-        catch
-        {
-            return new PagedProductResult<ProductDto>
+                // TODO: Serverul trebuie să returneze paginarea reală
+                return products;
+            }
+            catch (Exception ex)
             {
-                Items = new List<ProductDto>
-            {
-                new() { Id = -1, Name = "Eroare server", Price = 0.00m, Location = "Server oprit", ImageUrl = "", Category = "Toate" }
-            },
-                TotalItems = 1,
-                PageSize = pageSize
-            };
+                _logger.LogError(ex, $"SearchProductsPagedAsync failed for query: '{query}'");
+                return new PagedProductResult<ProductDto>
+                {
+                    Items = new()
+                    {
+                        new() { Id = -1, Name = "Eroare server", Price = 0.00m, Location = "Server oprit", ImageUrl = "", Category = "Toate" }
+                    },
+                    TotalItems = 1,
+                    PageSize = pageSize
+                };
+            }
         }
-
-        return await response.Content.ReadFromJsonAsync<PagedProductResult<ProductDto>>() ?? new PagedProductResult<ProductDto> { Items = new() };
     }
 }
