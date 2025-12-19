@@ -134,6 +134,8 @@ namespace InfoPointUI.Views
                 //ViewModel?.Products.Clear();
 
                 WindowManager.CloseIfOpen<CardScanWindow>();
+                WindowManager.BringToFront<ProductDetailsWindow>(); // aduce fereastra în față dacă e deschisă
+
                 // de aici e sigur bine :)
                 searchBox.Focus();
                 Keyboard.Focus(searchBox);

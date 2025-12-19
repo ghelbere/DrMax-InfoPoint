@@ -47,6 +47,13 @@ namespace InfoPointUI.Services
         {
             if (!_humanDetectionEnabled) return;
 
+            if (humanPresent)
+            {
+                _logger.LogInformation("Human presence confirmed - resetting user activity state");
+                _isUserActive = true;
+                ResetStandbyTimer();
+            }
+
             if (humanPresent && IsInStandbyMode)
             {
                 _logger.LogInformation("Auto-exiting standby - human detected");
@@ -211,7 +218,7 @@ namespace InfoPointUI.Services
 
             _logger.LogInformation("=== FORCING ACTIVE MODE ===");
 
-            StopHumanDetection();
+            // StopHumanDetection();
             StartTransition();
 
             IsInStandbyMode = false;
