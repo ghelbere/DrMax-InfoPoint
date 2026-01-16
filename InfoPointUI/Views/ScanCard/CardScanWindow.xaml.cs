@@ -62,6 +62,10 @@ namespace InfoPointUI.Views
             }
             else
             {
+                var notificationService = App.Current.GetService<INotificationService>();
+                notificationService?.ShowError("Card invalid: " + result.ErrorMessage);
+                WindowManager.BringToFront<NotificationOverlay>();
+
                 txtCardCode.Text = string.Empty;
                 txtCardCode.Focus();
             }
@@ -139,6 +143,7 @@ namespace InfoPointUI.Views
             // Cleanup
             _cardService.CardValidated -= OnCardValidated;
             _cardService.CardValidationFailed -= OnCardValidationFailed;
+            WindowManager.CloseIfOpen<NotificationOverlay>();
             base.OnClosed(e);
         }
     }

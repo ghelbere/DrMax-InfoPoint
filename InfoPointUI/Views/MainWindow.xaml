@@ -98,6 +98,7 @@
                         HorizontalAlignment="Right"
                         Style="{StaticResource CategoryButtonStyle}" 
                         Click="OnScanCard"
+                        TouchDown="OnScanCardTouched"
                     />
             <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2" Margin="10, 5">
                 <TextBlock

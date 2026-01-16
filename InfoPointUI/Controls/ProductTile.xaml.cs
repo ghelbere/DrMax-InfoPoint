@@ -94,6 +94,7 @@ namespace InfoPointUI.Controls
                     MessageBoxImage.Information
                 );*/
                 var detailsWindow = new ProductDetailsWindow(p);
+                detailsWindow.Owner = Application.Current.MainWindow;
                 detailsWindow.ShowDialog();
             }
         }

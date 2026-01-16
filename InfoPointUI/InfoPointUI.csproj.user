@@ -16,6 +16,9 @@
     <Compile Update="Controls\ProductTile.xaml.cs">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Update="Views\NotificationOverlay.xaml.cs">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Update="Views\ProductDetails\ProductCallConsultant.xaml.cs">
       <SubType>Code</SubType>
     </Compile>

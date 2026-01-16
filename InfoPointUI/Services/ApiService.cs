@@ -59,7 +59,13 @@ namespace InfoPointUI.Services
             }
             catch (Exception ex)
             {
+                // log error
                 _logger.LogError(ex, $"SearchProductsPagedAsync failed for query: '{query}'");
+
+                // notify user
+                var _notificationService = App.Current.GetService<INotificationService>();
+                _notificationService?.ShowError("Eroare la conectarea cu serverul. Verificați conexiunea la internet sau contactați suportul tehnic.", "Eroare server");
+
                 return new PagedProductResult<ProductDto>
                 {
                     Items = new()

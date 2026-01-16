@@ -13,7 +13,7 @@ namespace InfoPointUI.Services
 
         private const double MIN_FACE_AREA_RATIO = 0.03;
         private const double MIN_BODY_AREA_RATIO = 0.15;
-        private const int REQUIRED_CONSECUTIVE_FRAMES = 15;
+        private const int REQUIRED_CONSECUTIVE_FRAMES = 7; // initial am pus 15
         private const int ABSENCE_CONFIRMATION_FRAMES = 40;
 
         private int _consecutivePresenceFrames = 0;
@@ -36,8 +36,11 @@ namespace InfoPointUI.Services
             try
             {
                 _logger.LogInformation("Starting human detection service");
-
-                _camera = new VideoCapture(0);
+#if DEBUG
+                _camera = new VideoCapture(0); // Default Camera for debugging
+#else           
+                _camera = new VideoCapture(1); // Front Camera for tablets (0=back, 1=front)
+#endif
                 _camera.Set(VideoCaptureProperties.FrameWidth, 640);
                 _camera.Set(VideoCaptureProperties.FrameHeight, 480);
 
@@ -174,8 +177,19 @@ namespace InfoPointUI.Services
         {
             _isRunning = false;
             _lastConfirmedState = false;
-            _detectionThread?.Join(1000);
+            bool? threadTerminated = _detectionThread?.Join(1000);
+            if (threadTerminated != null && !(bool)threadTerminated)
+            {
+                _detectionThread?.Join(2000); // wait another 2s
+            }
             _camera?.Release();
+        }
+
+        public async Task ResetDetection()
+        {
+            StopDetection();
+            await Task.Delay(500);
+            StartDetection();
         }
 
         public bool IsRunning => _isRunning;

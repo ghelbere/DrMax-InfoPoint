@@ -1,15 +1,18 @@
-﻿using System.Windows;
+﻿using InfoPointUI.Services.Interfaces;
+using Microsoft.Extensions.Logging;
+using System.Diagnostics;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Interop;
 using System.Windows.Threading;
-using InfoPointUI.Services.Interfaces;
-using Microsoft.Extensions.Logging;
 
 namespace InfoPointUI.Services
 {
     public class StandbyService : IStandbyService
     {
         private readonly DispatcherTimer _standbyTimer;
+        private readonly Stopwatch _sw = new Stopwatch();
+        private readonly System.Timers.Timer _resetHumanDetectionTimer;
         private readonly ILogger<StandbyService> _logger;
         private Window? _registeredWindow;
         private HwndSource? _hwndSource;
@@ -19,8 +22,11 @@ namespace InfoPointUI.Services
         private bool _humanDetectionEnabled = true;
 #if !DEBUG
         private const int STANDBY_SECONDS = 120; // 120 secunde
+        private readonly int RESET_DETECTION_SECONDS = 60*10; // 10 minute
+
 #else
         private const int STANDBY_SECONDS = 15; // 15 secunde in DEBUG
+        private readonly int RESET_DETECTION_SECONDS = 15;
 #endif
 
         public StandbyService(ILogger<StandbyService> logger, SmartHumanDetectionService humanDetectionService)
@@ -33,6 +39,18 @@ namespace InfoPointUI.Services
             };
             _standbyTimer.Tick += OnStandbyTimerTick;
 
+            _resetHumanDetectionTimer = new System.Timers.Timer()
+            {
+                Interval = 1000
+            };
+            _resetHumanDetectionTimer.Elapsed += async (s, e) =>
+            {
+                await OnHumanDetectionResetTimerTick(s, e);
+            };
+            _resetHumanDetectionTimer.AutoReset = true;
+            _sw.Start();
+            _resetHumanDetectionTimer.Start();
+
             _isUserActive = true;
             _isTransitioning = false;
 
@@ -41,6 +59,18 @@ namespace InfoPointUI.Services
             StartHumanDetection();
 
             _logger.LogInformation("StandbyService created with timeout: {Timeout}", _standbyTimer.Interval);
+        }
+
+        private async Task OnHumanDetectionResetTimerTick(object? sender, EventArgs e)
+        {
+            if (_sw.Elapsed > TimeSpan.FromSeconds(RESET_DETECTION_SECONDS))
+            {
+                _resetHumanDetectionTimer.Stop();
+                await _humanDetectionService.ResetDetection();
+                _resetHumanDetectionTimer.Start();
+                _sw.Restart();
+                _logger.LogInformation("Human detection reset after {Elapsed} seconds", RESET_DETECTION_SECONDS);
+            }
         }
 
         private void OnHumanPresenceChanged(object? sender, bool humanPresent)

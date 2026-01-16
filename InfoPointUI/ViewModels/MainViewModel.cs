@@ -81,6 +81,7 @@ public partial class MainViewModel : ObservableObject
     private readonly ICardService _cardService;
     private readonly IApiService _apiService;
     private readonly IHttpClientFactory _httpClientFactory;
+    private readonly INotificationService _notificationService;
     private readonly string _tabletId;
 
     // 🎛️ Commands
@@ -90,11 +91,17 @@ public partial class MainViewModel : ObservableObject
     public ICommand PreviousPageCommand { get; }
     public ICommand ScanCardCommand { get; }
 
-    public MainViewModel(ICardService cardService, IApiService apiService, IHttpClientFactory httpClientFactory, IConfiguration configuration)
+    public MainViewModel(
+        ICardService cardService, 
+        IApiService apiService, 
+        IHttpClientFactory httpClientFactory, 
+        IConfiguration configuration,
+        INotificationService notificationService)
     {
         _cardService = cardService ?? throw new ArgumentNullException(nameof(cardService));
         _apiService = apiService ?? throw new ArgumentNullException(nameof(apiService));
         _httpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
+        _notificationService = notificationService ?? throw new ArgumentNullException(nameof(notificationService)); 
 
         // TabletId din configurație
         _tabletId = configuration["TabletSettings:Id"] ?? "TAB-999";

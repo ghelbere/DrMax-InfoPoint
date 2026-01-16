@@ -154,6 +154,9 @@ namespace InfoPointUI
             // Card Services
             services.AddSingleton<ICardService, CardService>();
 
+            // Notification Service
+            services.AddSingleton<INotificationService, NotificationService>();
+
             // ✅ 8. VIEWMODELS
             services.AddTransient<MainViewModel>(provider =>
             {
@@ -161,9 +164,12 @@ namespace InfoPointUI
                 var apiService = provider.GetRequiredService<IApiService>();
                 var configuration = provider.GetRequiredService<IConfiguration>();
                 var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
+                var notificationService = provider.GetRequiredService<INotificationService>();
 
-                return new MainViewModel(cardService, apiService, httpClientFactory, configuration);
+                return new MainViewModel(cardService, apiService, httpClientFactory, configuration, notificationService);
             });
+
+            //services.AddTransient<ProductDetailsViewModel>();
 
             // ✅ 9. WINDOWS
             services.AddTransient<CardScanWindow>();

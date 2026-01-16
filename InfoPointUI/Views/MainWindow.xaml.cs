@@ -105,7 +105,7 @@ namespace InfoPointUI.Views
             };
         }
 
-        private void OnScanCard(object sender, RoutedEventArgs e)
+        private void OnScanCard(object? sender, RoutedEventArgs? e)
         {
             var cardWindow = App.Current.GetService<CardScanWindow>();
             cardWindow.Owner = this;
@@ -153,6 +153,11 @@ namespace InfoPointUI.Views
             {
                 FocusSearchBox();
             }), DispatcherPriority.ContextIdle);
+        }
+
+        private void OnScanCardTouched(object sender, TouchEventArgs e)
+        {
+            OnScanCard(sender, null);
         }
     }
 }
