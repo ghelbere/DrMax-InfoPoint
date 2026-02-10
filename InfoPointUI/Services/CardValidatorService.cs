@@ -12,7 +12,6 @@ namespace InfoPointUI.Services
         private readonly HttpClient _httpClient;
         private readonly ILogger<CardValidatorService> _logger;
 
-        // Păstrează metoda statică existentă pentru compatibilitate
         public static bool IsValid(string cardCode) => IsValidEAN13(cardCode);
 
         public CardValidatorService(HttpClient httpClient, ILogger<CardValidatorService> logger)
@@ -23,7 +22,6 @@ namespace InfoPointUI.Services
 
         public bool ValidateEAN13(string cardCode)
         {
-            // Mută aici logica ta existentă din LoyaltyCardValidator.IsValid
             return IsValidEAN13(cardCode);
         }
 
