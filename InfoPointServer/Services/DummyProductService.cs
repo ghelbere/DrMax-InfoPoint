@@ -1,20 +1,10 @@
 ﻿using InfoPoint.Models;
+using InfoPointServer.Interfaces;
 
 namespace InfoPointServer.Services;
 
-public interface IProductService
-{
-    List<ProductDto> Search(string term, string? category);
-    PagedProductResult<ProductDto> Search(string term, string? category, int page, int pageSize);
-}
-
 public class DummyProductService : IProductService
 {
-    public List<ProductDto> Search(string term, string? category)
-    {
-        return new(); // Search(term, category, page: 0, pageSize: 10000); // fallback la tot
-    }
-
     public PagedProductResult<ProductDto> Search(string term, string? category, int page, int pageSize)
     {
         var allProducts = new List<ProductDto>();
@@ -64,7 +54,8 @@ public class DummyProductService : IProductService
                 Price = 42.99m,
                 Location = "Raftul 7 de la geam",
                 ImageUrl = "https://www.orteze.ro/client/uploads.images/1541772479_-_1.medium.jpg",
-                Category = "Proteze"
+                Category = "Proteze",
+                IsInStock = i % 3 == 0
             });
         }
 
@@ -84,5 +75,10 @@ public class DummyProductService : IProductService
             TotalItems = filtered.Count,
             PageSize = pageSize
         };
+    }
+
+    public List<ProductDto> Search(string term, string? category)
+    {
+        return new List<ProductDto>();
     }
 }

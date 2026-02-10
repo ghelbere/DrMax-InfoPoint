@@ -59,6 +59,33 @@ namespace InfoPointUI.Views
             btnClose.Visibility = Visibility.Collapsed;
             btnStandbyButton.Visibility = Visibility.Collapsed;  
 #endif
+
+            PreviewKeyDown += OnPreviewKeyDown;
+        }
+
+        private void OnPreviewKeyDown(object sender, KeyEventArgs e)
+        {
+            // Verifică CTRL+SHIFT+ALT+Q
+            if (Keyboard.IsKeyDown(Key.LeftCtrl) || Keyboard.IsKeyDown(Key.RightCtrl))
+            {
+                if (Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift))
+                {
+                    if (Keyboard.IsKeyDown(Key.LeftAlt) || Keyboard.IsKeyDown(Key.RightAlt))
+                    {
+                        if (e.Key == Key.Q)
+                        {
+                            e.Handled = true; // Previne propagarea
+
+                            // Confirmare și închidere
+                            if (MessageBox.Show("Închideți aplicația?\n(Combinație secretă activată)",
+                                    "Confirmare", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
+                            {
+                                Application.Current.Shutdown();
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         protected override void OnClosed(EventArgs e)

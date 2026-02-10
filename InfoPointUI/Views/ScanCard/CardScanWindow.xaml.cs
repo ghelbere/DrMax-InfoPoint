@@ -55,14 +55,15 @@ namespace InfoPointUI.Views
             }
 
             // Folosește serviciul injectat
+            var notificationService = App.Current.GetService<INotificationService>();
             var result = await _cardService.ValidateAndStoreCardAsync(code);
             if (result.IsValid)
             {
+                notificationService?.ShowInformation("Card valid: " + result.ClientName);
                 Close();
             }
             else
             {
-                var notificationService = App.Current.GetService<INotificationService>();
                 notificationService?.ShowError("Card invalid: " + result.ErrorMessage);
 
                 txtCardCode.Text = string.Empty;

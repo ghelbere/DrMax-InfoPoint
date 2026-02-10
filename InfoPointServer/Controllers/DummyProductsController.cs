@@ -1,4 +1,5 @@
-﻿using InfoPointServer.Services;
+﻿using InfoPointServer.Interfaces;
+using InfoPointServer.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace InfoPointServer.Controllers;

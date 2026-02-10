@@ -9,7 +9,7 @@ namespace InfoPointServer.Controllers
     // UNCOMMENT this to use /api/products route when removing DummyProductsController  
 
     //[ApiController]
-    //[Route("api/[controller]")]   
+    //[Route("api/[controller]")]
     public class ProductsController : ControllerBase
     {
         private readonly ProductSearchService _productSearchService;
@@ -46,12 +46,15 @@ namespace InfoPointServer.Controllers
 
                 _logger.LogInformation($"🧮 Returned {products.Count} items from page {page} in {DateTime.UtcNow.Subtract(requestTime).TotalMilliseconds:N0} ms");
             }
-            catch (Exception ex) {
+            catch (Exception ex)
+            {
                 return BadRequest(new { error = ex.Message });
             }
 
             return Ok(products);
         }
+
+
     }
 }
 

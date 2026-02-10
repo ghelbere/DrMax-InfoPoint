@@ -1,5 +1,5 @@
-﻿// Services/LoyaltyCardValidatorService.cs
-using InfoPoint.Models;
+﻿using InfoPoint.Models;
+using InfoPointShared.Models;
 using InfoPointUI.Services.Interfaces;
 using Microsoft.Extensions.Logging;
 using System.Net.Http;
@@ -35,25 +35,26 @@ namespace InfoPointUI.Services
                     IsValid = false,
                     ErrorMessage = "Format card invalid"
                 };
-            } else
-            {
-                //TODO: Remove this, this is only for local testing without API
-                return new CardValidationResult
-                {
-                    IsValid = true,
-                    ClientName = "Client",
-                    CardNumber = cardCode,
-                    IsActive = false,
-                    ErrorMessage = null
-                };
-            }
+            } 
+            //else
+            //{
+            //    //TODO: Remove this, this is only for local testing without API
+            //    return new CardValidationResult
+            //    {
+            //        IsValid = true,
+            //        ClientName = "Client",
+            //        CardNumber = cardCode,
+            //        IsActive = false,
+            //        ErrorMessage = null
+            //    };
+            //}
 
             // PAS 2: Validare prin API
             try
                 {
                     var response = await _httpClient.PostAsJsonAsync(
-                        "/api/client/card-validate",
-                        new { CardCode = cardCode });
+                        "/api/card-validate",
+                        new CardValidationRequest{ CardNumber = cardCode });
 
                     if (response.IsSuccessStatusCode)
                     {
@@ -61,7 +62,7 @@ namespace InfoPointUI.Services
 
                         return new CardValidationResult
                         {
-                            IsValid = true,
+                            IsValid = clientDto?.IsActive ?? false,
                             ClientName = clientDto?.FullName ?? "Client",
                             CardNumber = cardCode,
                             IsActive = clientDto?.IsActive ?? false,
@@ -91,8 +92,6 @@ namespace InfoPointUI.Services
 
         private static bool IsValidEAN13(string code)
         {
-            // COPIEAZĂ AICI LOGICA TA EXISTENTĂ din LoyaltyCardValidator.IsValid
-            // Exemplu:
             if (string.IsNullOrWhiteSpace(code) || code.Length != 13)
                 return false;
 

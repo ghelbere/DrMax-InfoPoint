@@ -1,6 +1,8 @@
 
 using InfoPointServer.Services;
+using InfoPointServer.Interfaces;
 using System.Net.Http.Headers;
+using InfoPointServer.Controllers;
 
 namespace InfoPointServer
 {
@@ -26,6 +28,7 @@ namespace InfoPointServer
             builder.Services.AddSingleton<IConfiguration>(builder.Configuration);
             builder.Services.AddSingleton<IProductService, DummyProductService>();
             builder.Services.AddSingleton<QuantAuthService>();
+            builder.Services.AddScoped<CardService>();
             builder.Services.AddHttpClient("QuantApi", client =>
             {
                 client.BaseAddress = new Uri("https://api.quantretail.com");
@@ -60,6 +63,15 @@ namespace InfoPointServer
             app.UseHttpsRedirection();
 
             app.UseAuthorization();
+
+            // CORS pentru development
+            if (app.Environment.IsDevelopment())
+            {
+                app.UseCors(builder => builder
+                    .AllowAnyOrigin()
+                    .AllowAnyMethod()
+                    .AllowAnyHeader());
+            }
 
             app.Use(async (context, next) =>
             {
