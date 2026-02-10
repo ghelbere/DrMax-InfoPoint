@@ -7,15 +7,15 @@ using System.Net.Http.Json;
 
 namespace InfoPointUI.Services
 {
-    public class LoyaltyCardValidatorService : ILoyaltyCardValidator
+    public class CardValidatorService : ILoyaltyCardValidator
     {
         private readonly HttpClient _httpClient;
-        private readonly ILogger<LoyaltyCardValidatorService> _logger;
+        private readonly ILogger<CardValidatorService> _logger;
 
         // Păstrează metoda statică existentă pentru compatibilitate
         public static bool IsValid(string cardCode) => IsValidEAN13(cardCode);
 
-        public LoyaltyCardValidatorService(HttpClient httpClient, ILogger<LoyaltyCardValidatorService> logger)
+        public CardValidatorService(HttpClient httpClient, ILogger<CardValidatorService> logger)
         {
             _httpClient = httpClient;
             _logger = logger;

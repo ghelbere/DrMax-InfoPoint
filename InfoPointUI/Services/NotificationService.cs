@@ -64,12 +64,16 @@ namespace InfoPointUI.Services
 
         private void ShowNotificationWindow(string message, string title, NotificationType type)
         {
-            var mainWindow = Application.Current.MainWindow;
-            if (mainWindow == null) return;
+            var parentWindow = Application.Current.Windows
+                .OfType<Window>()
+                .FirstOrDefault(w => w.IsActive) ?? Application.Current.MainWindow;
+
+            if (parentWindow == null) 
+                return;
 
             var notificationWindow = new NotificationOverlay(message, title, type)
             {
-                Owner = mainWindow,
+                Owner = parentWindow,
                 WindowStyle = WindowStyle.None,
                 AllowsTransparency = true,
                 ShowInTaskbar = false,
@@ -77,12 +81,12 @@ namespace InfoPointUI.Services
             };
 
             // Setăm dimensiunile pentru a acoperi fereastra principală
-            notificationWindow.Left = mainWindow.Left;
-            notificationWindow.Top = mainWindow.Top;
-            notificationWindow.Width = mainWindow.ActualWidth;
-            notificationWindow.Height = mainWindow.ActualHeight;
+            notificationWindow.Left = parentWindow.Left;
+            notificationWindow.Top = parentWindow.Top;
+            notificationWindow.Width = parentWindow.ActualWidth;
+            notificationWindow.Height = parentWindow.ActualHeight;
 
-            notificationWindow.Show();
+            notificationWindow.ShowDialog();
         }
     }
 

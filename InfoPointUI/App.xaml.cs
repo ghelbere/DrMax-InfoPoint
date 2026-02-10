@@ -133,8 +133,8 @@ namespace InfoPointUI
             {
                 var httpClientFactory = provider.GetRequiredService<IHttpClientFactory>();
                 var httpClient = httpClientFactory.CreateClient("InfoPointApi"); // ACELAȘI CLIENT!
-                var logger = provider.GetRequiredService<ILogger<LoyaltyCardValidatorService>>();
-                return new LoyaltyCardValidatorService(httpClient, logger);
+                var logger = provider.GetRequiredService<ILogger<CardValidatorService>>();
+                return new CardValidatorService(httpClient, logger);
             });
 
             // ✅ 6. HTTP CLIENT PENTRU IMAGINI (SEPARAT, FĂRĂ BASE ADDRESS)

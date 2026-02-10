@@ -64,7 +64,6 @@ namespace InfoPointUI.Views
             {
                 var notificationService = App.Current.GetService<INotificationService>();
                 notificationService?.ShowError("Card invalid: " + result.ErrorMessage);
-                WindowManager.BringToFront<NotificationOverlay>();
 
                 txtCardCode.Text = string.Empty;
                 txtCardCode.Focus();
