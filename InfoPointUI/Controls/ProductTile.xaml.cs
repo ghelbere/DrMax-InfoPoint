@@ -1,4 +1,5 @@
 ﻿using InfoPoint.Models;
+using InfoPointUI.Services;
 using InfoPointUI.Views.ProductDetails;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -95,7 +96,19 @@ namespace InfoPointUI.Controls
                 );*/
                 var detailsWindow = new ProductDetailsWindow(p);
                 detailsWindow.Owner = Application.Current.MainWindow;
-                detailsWindow.ShowDialog();
+
+                var isTouchKeyboardVisible = TouchKeyboardManager.IsTouchKeyboardVisible();
+                if (isTouchKeyboardVisible)
+                    TouchKeyboardManager.HideTouchKeyboard();
+                try
+                {
+                    detailsWindow.ShowDialog();
+                } finally
+                {
+                    // Re-show the touch keyboard if it was visible before opening the details window
+                    if (isTouchKeyboardVisible)
+                        await TouchKeyboardManager.ShowTouchKeyboardAsync();
+                }
             }
         }
 

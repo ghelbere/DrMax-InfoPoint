@@ -10,11 +10,13 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\Images\card_drmax.jpg" />
     <None Remove="Assets\Images\drmax_logo.png" />
     <None Remove="Assets\Images\empty_image.png" />
     <None Remove="Assets\Images\gps_pin.png" />
     <None Remove="Assets\Images\nurofen400.png" />
     <None Remove="Assets\Images\nurofen_forte_400.png" />
+    <None Remove="Assets\Images\sample_map.png" />
   </ItemGroup>
 
   <ItemGroup>
@@ -31,10 +33,16 @@
     <PackageReference Include="NLog.Extensions.Hosting" Version="6.1.0" />
     <PackageReference Include="OpenCvSharp4" Version="4.11.0.20250507" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.11.0.20250507" />
+    <PackageReference Include="System.Management" Version="10.0.2" />
   </ItemGroup>
 
   <ItemGroup>
-    <Resource Include="Assets\Images\drmax_logo.png" />
+    <Resource Include="Assets\Images\card_drmax.jpg">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\drmax_logo.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
     <Resource Include="Assets\Images\empty_image.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
@@ -45,6 +53,9 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\Images\nurofen_forte_400.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\Images\sample_map.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
   </ItemGroup>

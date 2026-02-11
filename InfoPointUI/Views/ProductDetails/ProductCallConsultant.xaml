@@ -4,6 +4,7 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:InfoPointUI.Views.ProductDetails"
+      xmlns:controls="clr-namespace:InfoPointUI.Controls"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="ProductCallConsultant"
@@ -13,11 +14,11 @@
 
     <Page.Resources>
         <!-- Stil pentru butoane rotunjite cu font mai mare -->
-        <Style TargetType="Button" x:Key="RoundedButtonLargeFont">
+        <Style TargetType="controls:TouchButton" x:Key="RoundedButtonLargeFont">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="Button">
+                    <ControlTemplate TargetType="controls:TouchButton">
                         <Border Background="{TemplateBinding Background}"
                         BorderBrush="{TemplateBinding BorderBrush}"
                         BorderThickness="{TemplateBinding BorderThickness}"
@@ -46,11 +47,11 @@
 
         <!-- Rândul 1 -->
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
-            <Button  Command="{Binding NavigateToDetailsCommand}" Content="Înapoi" Width="88" Height="42" Margin="0,0,12,0" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
-            <Button Tag="CloseWindow" Content="Home" Width="88" Height="42" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
+            <controls:TouchButton  Command="{Binding NavigateToDetailsCommand}" Content="Înapoi" Width="88" Height="48" Margin="0,0,12,0" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
+            <controls:TouchButton Tag="CloseWindow" Content="Home" Width="88" Height="48" Background="White" Style="{StaticResource RoundedButtonLargeFont}"/>
         </StackPanel>
 
-        <Image Grid.Row="0" Grid.Column="1" Source="/Assets/Images/drmax_logo.png" Height="42"
+        <Image Grid.Row="0" Grid.Column="1" Source="/Assets/Images/drmax_logo.png" Height="48"
                RenderOptions.BitmapScalingMode="HighQuality"
                HorizontalAlignment="Right"
                VerticalAlignment="Center"
@@ -61,7 +62,7 @@
             Grid.ColumnSpan="2" HorizontalAlignment="Center" VerticalAlignment="Center" >
             <TextBlock Text="Consultant solicitat!" Foreground="White" FontSize="32" HorizontalAlignment="Center"/>
             <TextBlock Height="24"/>
-            <TextBlock Text="Unul dintre colegii nostri vă va ajuta in cel mai scurt timp" Foreground="White" FontSize="28" />
+            <TextBlock Text="Unul dintre colegii nostri vă va ajuta in cel mai scurt timp" Foreground="White" FontSize="24" />
         </StackPanel>
 
     </Grid>

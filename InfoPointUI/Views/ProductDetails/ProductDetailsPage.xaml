@@ -4,18 +4,19 @@
       xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:InfoPointUI.Views.ProductDetails"
+      xmlns:controls="clr-namespace:InfoPointUI.Controls"
       mc:Ignorable="d" 
-      d:DesignHeight="450" d:DesignWidth="800"
+      d:DesignHeight="700" d:DesignWidth="1000"
       Title="ProductDetailsPage">
 
     <Page.Resources>
         <!-- Stil pentru butoane rotunjite cu font mai mare -->
-        <Style TargetType="Button" x:Key="RoundedButtonLargeFont">
+        <Style TargetType="controls:TouchButton" x:Key="RoundedButtonLargeFont">
             <Setter Property="FontSize" Value="18"/>
             <Setter Property="FontFamily" Value="{StaticResource BahnschriftFont}"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="Button">
+                    <ControlTemplate TargetType="controls:TouchButton">
                         <Border Background="{TemplateBinding Background}"
                             BorderBrush="{TemplateBinding BorderBrush}"
                             BorderThickness="{TemplateBinding BorderThickness}"
@@ -46,13 +47,13 @@
 
         <!-- Rândul 1 -->
         <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Left" Margin="0,0,0,10">
-            <Button Tag="CloseWindow" Content="Înapoi" Width="88" Height="42" Margin="0,0,12,0" Background="White" Style="{StaticResource RoundedButtonLargeFont}" VerticalContentAlignment="Center"/>
-            <Button Tag="CloseWindow" Content="Home" Width="88" Height="42" Background="White" Style="{StaticResource RoundedButtonLargeFont}" Visibility="Hidden"/>
+            <controls:TouchButton Tag="CloseWindow" Content="Înapoi" Width="88" Height="48" Margin="0,0,12,0" Background="White" Style="{StaticResource RoundedButtonLargeFont}" VerticalContentAlignment="Center"/>
+            <controls:TouchButton Tag="CloseWindow" Content="Home" Width="88" Height="48" Background="White" Style="{StaticResource RoundedButtonLargeFont}" Visibility="Hidden"/>
         </StackPanel>
 
         <Image Grid.Row="0" Grid.Column="1" Source="/Assets/Images/drmax_logo.png" 
                RenderOptions.BitmapScalingMode="HighQuality"
-               Height="42" 
+               Height="48" 
                HorizontalAlignment="Right"
                VerticalAlignment="Center"
                Margin="0,-10,30,0"/>
@@ -64,9 +65,9 @@
         <!-- Rândul 3 -->
         <Image Grid.Row="2" Grid.Column="0" Source="{Binding Product.ProductImage}" 
                RenderOptions.BitmapScalingMode="HighQuality"
-               Height="250" 
+               Height="400" 
                HorizontalAlignment="Center" 
-               VerticalAlignment="Top"/>
+               VerticalAlignment="Center"/>
 
         <StackPanel Grid.Row="2" Grid.Column="1" VerticalAlignment="Top" Margin="20,0,0,0">
             <TextBlock Text="{Binding Product.Name}" FontSize="22" FontWeight="Bold" Foreground="#333" TextWrapping="Wrap" FontFamily="{StaticResource BahnschriftFont}"/>
@@ -76,10 +77,16 @@
         </StackPanel>
 
         <!-- Rândul 4 -->
-        <Button Grid.Row="3" Grid.Column="0" Content="Localizează" Background="#2E7D32" Foreground="White" FontFamily="{StaticResource BahnschriftFont}"
-             Command="{Binding LocalizeazaCommand}" Width="187" Name="ToMapButton" Height="55" HorizontalAlignment="Right" Margin="0,15,10,0" Style="{StaticResource RoundedButtonLargeFont}"/>
-        <Button Grid.Row="3" Grid.Column="1" Content="Cheamă consultant" Background="White" Foreground="Black" FontFamily="{StaticResource BahnschriftFont}"
-             Command="{Binding CallConsultantCommand}" Width="187" Height="55" HorizontalAlignment="Left" Margin="10,15,0,0" Style="{StaticResource RoundedButtonLargeFont}"/>
+        <controls:TouchButton Grid.Row="3" Grid.Column="0" Content="Localizează" Background="#2E7D32" Foreground="White" FontFamily="{StaticResource BahnschriftFont}"
+                Command="{Binding LocalizeazaCommand}" Width="187" x:Name="ToMapButton" Height="55" HorizontalAlignment="Right" Margin="0,15,10,0" 
+                Style="{StaticResource RoundedButtonLargeFont}"
+                PreviewTouchDown="Button_PreviewTouchDown"
+                PreviewTouchUp="Button_PreviewTouchUp"/>
+        <controls:TouchButton Grid.Row="3" Grid.Column="1" Content="Cheamă consultant" Background="White" Foreground="Black" FontFamily="{StaticResource BahnschriftFont}"
+                Command="{Binding CallConsultantCommand}" Width="187" Height="55" HorizontalAlignment="Left" Margin="10,15,0,0" 
+                Style="{StaticResource RoundedButtonLargeFont}"
+                PreviewTouchDown="Button_PreviewTouchDown"
+                PreviewTouchUp="Button_PreviewTouchUp"/>
     </Grid>
 
 </Page>

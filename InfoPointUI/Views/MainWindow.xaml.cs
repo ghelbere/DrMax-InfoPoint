@@ -1,6 +1,7 @@
 ﻿using InfoPointUI.Controls;
 using InfoPointUI.Helpers;
 using InfoPointUI.Sensors;
+using InfoPointUI.Services;
 using InfoPointUI.Services.Interfaces;
 using InfoPointUI.ViewModels;
 using InfoPointUI.Views.ProductDetails;
@@ -56,7 +57,6 @@ namespace InfoPointUI.Views
             _standbyService = standbyService;
 
 #if !DEBUG
-            btnClose.Visibility = Visibility.Collapsed;
             btnStandbyButton.Visibility = Visibility.Collapsed;  
 #endif
 
@@ -80,6 +80,7 @@ namespace InfoPointUI.Views
                             if (MessageBox.Show("Închideți aplicația?\n(Combinație secretă activată)",
                                     "Confirmare", MessageBoxButton.YesNo) == MessageBoxResult.Yes)
                             {
+                                TouchKeyboardManager.HideTouchKeyboard();
                                 Application.Current.Shutdown();
                             }
                         }
@@ -90,30 +91,27 @@ namespace InfoPointUI.Views
 
         protected override void OnClosed(EventArgs e)
         {
+            TouchKeyboardManager.HideTouchKeyboard();
             Loaded -= Window_Loaded;
             base.OnClosed(e);
         }
 
-        private void Window_Loaded(object sender, RoutedEventArgs e)
+        private async void Window_Loaded(object sender, RoutedEventArgs e)
         {
             FocusSearchBox();
             Keyboard.Focus(SearchTextBox);
 
-            ViewModel.PageSize = (int)(ProductItemsControl.ActualWidth / 245) * (int)(ProductItemsControl.ActualHeight / 215);
+            ViewModel.PageSize = (int)(ProductItemsControl.ActualWidth / 250) * (int)(ProductItemsControl.ActualHeight / 205);
 
 
-            _swipeHandler = new SwipeGestureHandler(MainGrid, ProductItemsControl)
+            _swipeHandler = new SwipeGestureHandler(grdItems, ProductItemsControl)
             {
                 OnSwipeLeft = () => ViewModel?.NextPageCommand.Execute(null),
                 OnSwipeRight = () => ViewModel?.PreviousPageCommand.Execute(null)
             };
 
-        }
+            await TouchKeyboardManager.ShowTouchKeyboardAsync();
 
-        private void SearchBox_GotFocus(object sender, RoutedEventArgs e)
-        {
-            // Dacă folosești pe tabletă, poți activa tastatura virtuală:
-            // Process.Start("C:\\Program Files\\Common Files\\Microsoft Shared\\ink\\TabTip.exe");
         }
 
 
@@ -132,17 +130,19 @@ namespace InfoPointUI.Views
             };
         }
 
-        private void OnScanCard(object? sender, RoutedEventArgs? e)
+        private async void OnScanCard(object? sender, RoutedEventArgs? e)
         {
-            var cardWindow = App.Current.GetService<CardScanWindow>();
-            cardWindow.Owner = this;
-            cardWindow.ShowDialog();
-            FocusSearchBox();
-        }
-
-        private void DebugCloseButton_Click(object sender, RoutedEventArgs e)
-        {
-            Application.Current.Shutdown();
+            try
+            {
+                TouchKeyboardManager.HideTouchKeyboard();
+                var cardWindow = App.Current.GetService<CardScanWindow>();
+                cardWindow.Owner = this;
+                cardWindow.ShowDialog();
+                FocusSearchBox();
+            } finally
+            {
+                await TouchKeyboardManager.ShowTouchKeyboardAsync();
+            }
         }
 
         private void TestStandbyButton_Click(object sender, RoutedEventArgs e)
@@ -154,6 +154,9 @@ namespace InfoPointUI.Views
         internal void FocusSearchBox()
         {
             var searchBox = FindName("SearchTextBox") as TextBox;
+            if (searchBox == null || searchBox.IsFocused)
+                return;
+
             if (searchBox != null && searchBox.IsVisible && searchBox.IsEnabled)
             {
                 // oare e ok?
@@ -184,7 +187,41 @@ namespace InfoPointUI.Views
 
         private void OnScanCardTouched(object sender, TouchEventArgs e)
         {
+            e.Handled = true; // Previne propagarea evenimentului touch
             OnScanCard(sender, null);
+        }
+
+        private async void SearchTextBox_MouseDown(object sender, MouseButtonEventArgs? e)
+        {
+            TouchKeyboardManager.HideTouchKeyboard();
+            await TouchKeyboardManager.ShowTouchKeyboardAsync();
+        }
+
+        private void SearchTextBox_TouchDown(object sender, TouchEventArgs e)
+        {
+            SearchTextBox_MouseDown(sender, null);
+        }
+
+        private void NextPageTouchDown(object sender, TouchEventArgs e)
+        {
+            if (DataContext is MainViewModel vm && vm.NextPageCommand.CanExecute(null))
+            {
+                vm.NextPageCommand.Execute(null);
+            }
+        }
+
+        private void PreviousPageTouchDown(object sender, TouchEventArgs e)
+        {
+            if (DataContext is MainViewModel vm && vm.PreviousPageCommand.CanExecute(null))
+            {
+                vm.PreviousPageCommand.Execute(null);
+            }
+        }
+
+        private void MainGrid_TouchDown(object sender, TouchEventArgs e)
+        {
+            TouchKeyboardManager.HideTouchKeyboard();
+            e.Handled = true; // Previne propagarea evenimentului touch
         }
     }
 }

@@ -13,7 +13,7 @@
         Loaded="Window_Loaded"  
         KeyDown="Window_KeyDown">
 
-    <Grid Background="Transparent" MouseDown="Overlay_MouseDown">
+    <Grid Background="Transparent" MouseUp="Overlay_MouseDown">
         <!-- Panou central negru -->
         <Border Background="#AA000000"
                 CornerRadius="12"
@@ -22,7 +22,7 @@
                 Height="350"
                 HorizontalAlignment="Center"
                 VerticalAlignment="Center"
-                MouseDown="CenterPanel_MouseDown">
+                MouseUp="CenterPanel_MouseDown">
             <Grid>
                 <!-- Buton X -->
                 <Button Content="✕"

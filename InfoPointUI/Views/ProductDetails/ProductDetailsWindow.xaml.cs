@@ -1,4 +1,5 @@
 ﻿using InfoPoint.Models;
+using InfoPointUI.Controls;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -63,7 +64,7 @@ namespace InfoPointUI.Views.ProductDetails
             var fadeOut = new DoubleAnimation
             {
                 To = 0,
-                Duration = TimeSpan.FromMilliseconds(300),
+                Duration = TimeSpan.FromMilliseconds(200),
                 FillBehavior = FillBehavior.Stop
             };
 
@@ -86,7 +87,7 @@ namespace InfoPointUI.Views.ProductDetails
             {
                 From = 0,
                 To = 1,
-                Duration = TimeSpan.FromMilliseconds(300),
+                Duration = TimeSpan.FromMilliseconds(200),
                 FillBehavior = FillBehavior.HoldEnd
             };
 
@@ -97,15 +98,17 @@ namespace InfoPointUI.Views.ProductDetails
         private void Window_Loaded(object sender, RoutedEventArgs e)
         {
             // Asculți toate clickurile din frame
-            FrameHost.AddHandler(Button.ClickEvent, new RoutedEventHandler(OnAnyButtonClick));
+            FrameHost.AddHandler(TouchButton.ClickEvent, new RoutedEventHandler(OnAnyButtonClick));
         }
 
         private void OnAnyButtonClick(object sender, RoutedEventArgs e)
         {
-            if (e.OriginalSource is Button btn && (btn.Tag as string) == "CloseWindow")
+            if (e.OriginalSource is TouchButton btn && (btn.Tag as string) == "CloseWindow")
             {
-                this.Close();
+                if (this.IsActive && this.IsVisible)
+                    this.Close();
             }
+            e.Handled = true; // Previne propagarea evenimentului
         }
 
     }

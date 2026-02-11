@@ -13,10 +13,19 @@ public class DummyProductService : IProductService
             allProducts.Add(new()
             {
                 Id = 1 + i,
-                Name = $"Aspirin {i}",
+                Name = $"Cremă hidratantă cu apă termală SPF 20 Eau Thermale, 40ml, Uriage {i}",
                 Price = 8.99m,
                 Location = $"Raft {1 + i}",
-                ImageUrl = "",
+                ImageUrl = "https://www.drmax.ro/_i/215245752.webp?m2=%2Fmedia%2Fcatalog%2Fproduct%2F3%2F6%2F3661434005039_eau_thermale_crema_hidratanta_cu_spf20_40ml_rezultate.png&fit=contain&w=350&h=350&format=webp",
+                Category = "Cosmetice"
+            });
+            allProducts.Add(new()
+            {
+                Id = 1 + i,
+                Name = $"Șampon tratament antimatreață cu apă termală DS Hair, 200ml, Uriage {i}",
+                Price = 8.99m,
+                Location = $"Raft {1 + i}",
+                ImageUrl = "https://www.drmax.ro/_i/1980779185.webp?m2=%2Fmedia%2Fcatalog%2Fproduct%2Fd%2Fs%2Fds_hair_sampon_tratament_uriage.jpg&fit=contain&w=350&h=350&format=webp",
                 Category = "Cosmetice"
             });
             allProducts.Add(new()

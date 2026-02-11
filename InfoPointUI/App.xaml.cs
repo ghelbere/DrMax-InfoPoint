@@ -190,6 +190,7 @@ namespace InfoPointUI
 
         protected override void OnExit(ExitEventArgs e)
         {
+            TouchKeyboardManager.HideTouchKeyboard();
             _applicationManager?.ShutdownApplication();
             _serviceProvider?.Dispose();
 

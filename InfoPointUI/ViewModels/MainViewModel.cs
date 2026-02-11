@@ -224,17 +224,21 @@ public partial class MainViewModel : ObservableObject
 
         Application.Current.Dispatcher.Invoke(() =>
         {
-            Products.Clear();
-            foreach (var product in result.Items)
+            try
             {
-                Products.Add(product);
-                _ = LoadProductImageAsync(product);
+                Products.Clear();
+                foreach (var product in result.Items)
+                {
+                    Products.Add(product);
+                    _ = LoadProductImageAsync(product);
+                }
+
+                TotalPages = result.TotalPages;
+
+                ((RelayCommand)NextPageCommand).NotifyCanExecuteChanged();
+                ((RelayCommand)PreviousPageCommand).NotifyCanExecuteChanged();
             }
-
-            TotalPages = result.TotalPages;
-
-            ((RelayCommand)NextPageCommand).NotifyCanExecuteChanged();
-            ((RelayCommand)PreviousPageCommand).NotifyCanExecuteChanged();
+            catch { }
         });
     }
 

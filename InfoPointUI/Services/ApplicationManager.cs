@@ -83,6 +83,7 @@ namespace InfoPointUI.Services
             _isShuttingDown = true;
             _standbyService.PropertyChanged -= OnStandbyStateChanged;
             _mainWindow.Closing -= OnMainWindowClosing;
+            TouchKeyboardManager.HideTouchKeyboard();
             Application.Current.Shutdown();
         }
 
@@ -92,6 +93,7 @@ namespace InfoPointUI.Services
             _isShuttingDown = true;
             Application.Current.Dispatcher.Invoke(() =>
             {
+                TouchKeyboardManager.HideTouchKeyboard();
                 Application.Current.Shutdown();
             });
         }

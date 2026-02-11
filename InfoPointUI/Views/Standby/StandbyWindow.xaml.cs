@@ -5,6 +5,7 @@ using System.Windows.Threading;
 using Microsoft.Extensions.Logging;
 using NLog;
 using InfoPointUI.Services.Interfaces;
+using InfoPointUI.Services;
 
 namespace InfoPointUI.Views
 {
@@ -46,6 +47,7 @@ namespace InfoPointUI.Views
             _logger?.Info("StandbyWindow loaded and visible");
             StartLogoAnimation();
             StartTextAnimation();
+            TouchKeyboardManager.HideTouchKeyboard();
         }
 
         private void StartLogoAnimation()
